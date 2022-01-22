@@ -4,7 +4,7 @@ echo " "
 echo "RESTART SERVICES"
 echo " "
 
-systemctl restart nginx.service php7.2-fpm.service php7.4-fpm.service
+systemctl restart nginx.service php8.1-fpm.service php7.4-fpm.service
 
 echo ""
 echo "------------------------------------------------------------------------"
