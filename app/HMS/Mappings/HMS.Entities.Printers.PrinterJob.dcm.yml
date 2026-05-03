@@ -1,0 +1,43 @@
+# HMS.Entities.Printers.PrinterJob.dcm.yml
+HMS\Entities\Printers\PrinterJob:
+  type: entity
+  repositoryClass: HMS\Repositories\Printers\Doctrine\DoctrinePrinterJobRepository
+  table: printer_jobs
+  gedmo:
+    soft_deleteable:
+      field_name: deletedAt
+      time_aware: false
+  id:
+    jobId:
+      type: integer
+      unique: true
+      generator:
+        strategy: AUTO
+  fields:
+    jobName:
+      type: string
+    colour:
+      type: boolean
+    pageSize:
+      type: integer
+    pageCount:
+      type: integer
+    deletedAt:
+      type: datetime
+      nullable: true
+    createdAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: create
+    updatedAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: update
+  manyToOne:
+    printer:
+      targetEntity: \HMS\Entities\Printers\Printer
+      joinColumn:
+        name: printer_id
+        referencedColumnName: printer_id

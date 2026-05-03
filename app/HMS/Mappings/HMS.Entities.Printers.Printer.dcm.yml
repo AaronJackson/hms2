@@ -1,0 +1,46 @@
+# HMS.Entities.Printers.Printer.dcm.yml
+HMS\Entities\Printers\Printer:
+  type: entity
+  repositoryClass: HMS\Repositories\Printers\Doctrine\DoctrinePrinterRepository
+  table: printers
+  gedmo:
+    soft_deleteable:
+      field_name: deletedAt
+      time_aware: false
+  id:
+    printerId:
+      type: integer
+      unique: true
+      generator:
+        strategy: AUTO
+  fields:
+    printerName:
+      type: string
+      unique: true
+    ippUri:
+      type: string
+    costA4Black:
+      type: integer
+      nullable: true
+    costA4Colour:
+      type: integer
+      nullable: true
+    costA3Black:
+      type: integer
+      nullable: true
+    costA3Colour:
+      type: integer
+      nullable: true
+    deletedAt:
+      type: datetime
+      nullable: true
+    createdAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: create
+    updatedAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: update

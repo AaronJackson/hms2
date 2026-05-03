@@ -50,6 +50,12 @@ return [
             'route' => 'teams.index',
             'permissions' => ['team.view'],
         ],
+        'printers' => [
+            'text' => 'Printers',
+            'route' => 'printing.index',
+            'permissions' => ['printers.print'],
+            'feature' => 'printers',
+        ],
         'codes' => [
             'text' => 'Space Access',
             'route' => 'gatekeeper.accessCodes',

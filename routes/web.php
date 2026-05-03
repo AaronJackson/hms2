@@ -29,6 +29,7 @@ use App\Http\Controllers\Members\BoxController;
 use App\Http\Controllers\Members\ProjectController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MetaController;
+use App\Http\Controllers\PrintingController;
 use App\Http\Controllers\RegisterInterestController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Snackspace\DebtController;
@@ -104,7 +105,7 @@ Route::get('gatekeeper/b/{building}/u/{user}/have-left', [AccessController::clas
     ->middleware('signed');
 
 // Routes in the following group can only be access from inside the hackspace (as defined by the ip range in .env)
-Route::middleware(['ipcheck', 'throttle:6,1'])->group(function () {
+Route::middleware(['ipcheck'])->group(function () {
     Route::get('register-interest', [RegisterInterestController::class, 'index'])->name('registerInterest');
     Route::post('register-interest', [RegisterInterestController::class, 'registerInterest']);
 });
@@ -206,6 +207,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('labels/{label}/print', [LabelTemplateController::class, 'showPrint'])->name('labels.showPrint');
     Route::post('labels/{label}/print', [LabelTemplateController::class, 'print'])->name('labels.print');
     Route::resource('labels', LabelTemplateController::class);
+
+    // Printing
+    Route::get('printing', [PrintingController::class, 'index'])->name('printing.index');
 
     // Membership
     Route::get('membership', [MembershipController::class, 'index'])->name('membership.index');

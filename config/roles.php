@@ -140,6 +140,8 @@ return [
         'governance.registerOfMembers.view.grant',
         'governance.registerOfDirectors.view',
         'governance.registerOfDirectors.view.grant',
+        'printers.print',
+        'printers.edit',
     ],
 
     /*
@@ -269,6 +271,7 @@ return [
                 'governance.proxy.representPrincipal',
                 'pins.view.self',
                 'grafana.viewer',
+                'printers.print',
             ],
         ],
         'member.temporarybanned' => [
@@ -533,6 +536,7 @@ return [
                 'logViewer.view',
                 'team.edit.description',
                 'grafana.admin',
+                'printers.edit',
             ],
         ],
     ],

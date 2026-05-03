@@ -44,6 +44,8 @@ return [
         'Email',
         'RoleUpdate',
         'LabelTemplate',
+        'Printers\Printer',
+        //'Printers\PrinterJob',
         'Gatekeeper\Building',
         'Gatekeeper\BookableArea',
         'Gatekeeper\Pin',
