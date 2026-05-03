@@ -13,5 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'git-deploy',
+        'ipp/print/*'
     ];
 }

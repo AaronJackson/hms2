@@ -33,6 +33,7 @@
         "lwk/safe-queue": "^2.0",
         "lwk/vimbadmin-laravel-client": "^1.2.8",
         "mailgun/mailgun-php": "^4.3",
+        "obray/ipp": "^1.2",
         "opcodesio/log-viewer": "^3.0",
         "pusher/pusher-php-server": "^7.2",
         "restcord/restcord": "v9.x-dev",

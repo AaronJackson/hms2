@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05ab5ac238a1919602fae3c88db91479",
+    "content-hash": "4ed082cd375a3ac624102b432142c0ce",
     "packages": [
         {
             "name": "agenciasys/ofxparser",
@@ -6027,6 +6027,43 @@
                 }
             ],
             "time": "2024-09-09T07:06:30+00:00"
+        },
+        {
+            "name": "obray/ipp",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nateobray/IPP.git",
+                "reference": "e1f724bba55fd1ebce8c56775d4a86b9514054ae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nateobray/IPP/zipball/e1f724bba55fd1ebce8c56775d4a86b9514054ae",
+                "reference": "e1f724bba55fd1ebce8c56775d4a86b9514054ae",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "obray\\ipp\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A PHP implemntation of the Internet Printing Protocol (IPP)",
+            "support": {
+                "issues": "https://github.com/nateobray/IPP/issues",
+                "source": "https://github.com/nateobray/IPP/tree/v1.6.0"
+            },
+            "time": "2026-04-13T16:48:10+00:00"
         },
         {
             "name": "opcodesio/log-viewer",

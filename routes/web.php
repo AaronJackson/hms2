@@ -41,6 +41,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\Tools\BookingController;
 use App\Http\Controllers\Tools\ToolController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\IPPController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -106,6 +107,11 @@ Route::get('gatekeeper/b/{building}/u/{user}/have-left', [AccessController::clas
 Route::middleware(['ipcheck', 'throttle:6,1'])->group(function () {
     Route::get('register-interest', [RegisterInterestController::class, 'index'])->name('registerInterest');
     Route::post('register-interest', [RegisterInterestController::class, 'registerInterest']);
+});
+
+// IPP Printing
+Route::middleware(['ipcheck'])->group(function () {
+    Route::post('ipp/print/{jwt}', [IPPController::class, 'print'])->name('ipp.user');
 });
 
 // Routes in the following group can only be access once logged-in
