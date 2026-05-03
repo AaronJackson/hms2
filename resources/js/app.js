@@ -39,7 +39,7 @@ $("#user-edit-form,#membership-edit-details-form,#register-form").submit(functio
 window.copyToClipboard = function (element) {
   var $temp = $("<input>");
   $("body").append($temp);
-  $temp.val($(element).text()).select();
+  $temp.val($(element).text() || $(element).val()).select();
   document.execCommand("copy");
   $temp.remove();
 }
