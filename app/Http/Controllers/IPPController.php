@@ -13,6 +13,7 @@ use HMS\Entities\Printers\Printer;
 use HMS\Entities\Printers\PrinterJob;
 use HMS\Repositories\UserRepository;
 use HMS\Repositories\Printers\PrinterRepository;
+use HMS\Repositories\Printers\PrinterJobRepository;
 use HMS\Repositories\Snackspace\TransactionRepository;
 use HMS\Helpers\IPPPrinter;
 
@@ -22,6 +23,7 @@ class IPPController extends Controller
      * @var PrinterRepository
      */
     protected $printerRepository;
+    protected $printerJobRepository;
     protected $userRepository;
     protected $transactionRepository;
 
@@ -32,10 +34,12 @@ class IPPController extends Controller
      */
     public function __construct(
         PrinterRepository $printerRepository,
+        PrinterJobRepository $printerJobRepository,
         UserRepository $userRepository,
         TransactionRepository $transactionRepository,
     ) {
         $this->printerRepository = $printerRepository;
+        $this->printerJobRepository = $printerJobRepository;
         $this->userRepository = $userRepository;
         $this->transactionRepository = $transactionRepository;
     }
@@ -44,6 +48,9 @@ class IPPController extends Controller
     {
         $key = config('hms.printers_key', null);
         $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+
+        $transaction = null;
+        $printerJob = null;
 
         $user = $this->userRepository->findOneById((int)$decoded->u);
         $printer = $this->printerRepository->findOneByPrinterId((int)$decoded->p);
@@ -59,21 +66,22 @@ class IPPController extends Controller
         $newIppAddress = $printer->getIppUri();
         $helper->updatePrinterUri($oldIppAddress, $newIppAddress);
 
-        // If it doesn't have a document, it's probably a Get-Status command or similar.
+        // If it doesn't have a document, it's probably a Get-Status, Get-Printer-Attributes or similar.
         if ($helper->hasDocument()) {
-            // We're only doing PDF for now...
-            if (! $helper->validatePdfJob()) {
+            if (! $helper->validatePostScriptJob()) {
                 return response('Invalid document', 400)->header('Content-Type', 'application/ipp');
             }
 
             $printerJob = $helper->bodyToJob();
             if ($printerJob) {
+                $printerJob->setUser($user);
                 if ($printerJob->getCost()) {
                     $transaction = new Transaction($user, -$printerJob->getCost(), TransactionState::COMPLETE);
                     $transaction->setDescription((string)$printerJob);
                     $transaction->setType(TransactionType::PRINTING);
-                    $this->transactionRepository->saveAndUpdateBalance($transaction);
                 }
+            } else {
+                return response('Invalid document', 400)->header('Content-Type', 'application/ipp');
             }
         }
         $response = $printer->forward($helper->getBody());
@@ -105,10 +113,15 @@ class IPPController extends Controller
                 }
             }
 
-            $supportedMime = 'application/pdf';
+            $supportedMime = 'application/postscript';
             $response = substr($r, 0, $start) . 'document-format-supported' . chr(0) . chr(strlen($supportedMime))
                       . $supportedMime . substr($response, $i);
         }
+
+        if ($transaction)
+            $this->transactionRepository->saveAndUpdateBalance($transaction);
+        if ($printerJob)
+            $this->printerJobRepository->save($printerJob);
 
         return response($response, 200)->header('Content-Type', 'application/ipp');
     }

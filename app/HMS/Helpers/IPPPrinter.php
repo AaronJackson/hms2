@@ -45,50 +45,12 @@ class IPPPrinter
             $this->body);
     }
 
-    public function validatePclJob()
+    public function validatePostScriptJob()
     {
-        // The first few bytes of a PCL job should be `<ESC><0xFF>2345X@PJL`
-        return true;
-        return str_starts_with($this->body, chr(0x1B) . '%-12345X@PJL');
+        return str_starts_with($this->ippPayload->document, '%!PS-Adobe');
     }
 
-    public function validatePdfJob()
-    {
-        return true;
-        return str_starts_with($this->body, '%!PS-Adobe-3.0');
-    }
-
-    protected function parsePclFile($filename)
-    {
-        $attr = [];
-
-        $fd = fopen($filename, 'r');
-        while (($line = fgets($fd)) !== false) {
-            if (str_starts_with($line, '@PJL JOB NAME')) {
-                preg_match('/@PJL JOB NAME = \"([^\"]+)\"/', $line, $parts);
-                if (sizeof($parts) == 2) {
-                    $attr['NAME'] = $parts[1];
-                }
-            }
-
-            if (str_starts_with($line, '@PJL SET')) {
-                preg_match('/@PJL SET ([^ ]*)=(.*)/', $line, $parts);
-                if (sizeof($parts) == 3) {
-                    $attr[$parts[1]] = $parts[2];
-                }
-            }
-
-            if (str_starts_with($line, '@PJL ENTER LANGAUGE')) {
-                break;
-            }
-        }
-
-        fclose($fd);
-
-        return $attr;
-    }
-
-    protected function parsePdfFile($filename)
+    protected function parsePostScriptFile($filename)
     {
         $attr = [];
 
@@ -121,7 +83,7 @@ class IPPPrinter
     public function hasDocument()
     {
         if ($this->ippPayload->document)
-            file_put_contents('/tmp/ippPayload', print_r($this->ippPayload, true));
+            file_put_contents('/tmp/ippPayload', $this->ippPayload->document);
         return (!! $this->ippPayload->document);
     }
 
@@ -133,7 +95,7 @@ class IPPPrinter
             $temporaryPostscript = tempnam('/tmp', 'ippgs_');
             file_put_contents($temporaryPostscript, $this->ippPayload->document);
 
-            $pclAttributes = $this->parsePdfFile($temporaryPostscript);
+            $pclAttributes = $this->parsePostScriptFile($temporaryPostscript);
             if (array_key_exists('Name', $pclAttributes)) {
                 $printerJob->setJobName($pclAttributes['Name']);
             }

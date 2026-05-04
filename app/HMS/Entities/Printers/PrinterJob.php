@@ -4,6 +4,7 @@ namespace HMS\Entities\Printers;
 
 use Carbon\Carbon;
 use HMS\Traits\Entities\Timestampable;
+use HMS\Entities\User;
 
 class PrinterJob
 {
@@ -13,6 +14,8 @@ class PrinterJob
      * @var int
      */
     protected $jobId;
+
+    protected $user;
 
     protected $printer;
 
@@ -32,6 +35,36 @@ class PrinterJob
     public function __construct($printer)
     {
         $this->printer = $printer;
+
+        $this->pagesA4Black = 0;
+        $this->pagesA4Colour = 0;
+        $this->pagesA3Black = 0;
+        $this->pagesA3Colour = 0;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    public function getPrinter()
+    {
+        return $this->printer;
+    }
+
+    public function setPrinter(Printer $printer)
+    {
+        $this->printer = $printer;
+    }
+
+    public function getJobName()
+    {
+        return $this->jobName;
     }
 
     public function setJobName($jobName)
@@ -44,9 +77,19 @@ class PrinterJob
         $this->pagesA4Black = $pages;
     }
 
+    public function getPagesA4Black()
+    {
+        return $this->pagesA4Black;
+    }
+
     public function setPagesA4Colour($pages)
     {
         $this->pagesA4Colour = $pages;
+    }
+
+    public function getPagesA4Colour()
+    {
+        return $this->pagesA4Colour;
     }
 
     public function setPagesA3Black($pages)
@@ -54,9 +97,24 @@ class PrinterJob
         $this->pagesA3Black = $pages;
     }
 
+    public function getPagesA3Black()
+    {
+        return $this->pagesA3Black;
+    }
+
     public function setPagesA3Colour($pages)
     {
         $this->pagesA3Colour = $pages;
+    }
+
+    public function getPagesA3Colour()
+    {
+        return $this->pagesA3Colour;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 
     public function __toString()

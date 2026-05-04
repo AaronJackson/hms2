@@ -16,11 +16,13 @@ HMS\Entities\Printers\PrinterJob:
   fields:
     jobName:
       type: string
-    colour:
-      type: boolean
-    pageSize:
+    pagesA4Black:
       type: integer
-    pageCount:
+    pagesA4Colour:
+      type: integer
+    pagesA3Black:
+      type: integer
+    pagesA3Colour:
       type: integer
     deletedAt:
       type: datetime
@@ -36,6 +38,12 @@ HMS\Entities\Printers\PrinterJob:
         timestampable:
           on: update
   manyToOne:
+    user:
+      targetEntity: \HMS\Entities\User
+      joinColumn:
+        name: user_id
+        referencedColumnName: id
+        nullable: false
     printer:
       targetEntity: \HMS\Entities\Printers\Printer
       joinColumn:
