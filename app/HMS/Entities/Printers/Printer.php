@@ -58,7 +58,7 @@ class Printer
         return $this->printerId;
     }
 
-    public function getName()
+    public function getPrinterName()
     {
         return $this->printerName;
     }
@@ -113,5 +113,31 @@ class Printer
         } catch (\obray\ipp\exceptions\NetworkError $e) {
             return 'network error';
         }
+    }
+
+    public function forward($body)
+    {
+        $options = [
+            'http' => [
+                'method' => 'POST',
+                'header' => 'Content-Type: application/ipp',
+                'content' => $body,
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]
+        ];
+
+        $context = stream_context_create($options);
+
+        $fp = fopen($this->ippUri, 'r', false, $context);
+        $response = '';
+        while (!feof($fp)) {
+            $response .= fread($fp, 1024);
+        }
+        fclose($fp);
+
+        return $response;
     }
 }

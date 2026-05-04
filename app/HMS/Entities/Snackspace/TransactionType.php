@@ -25,6 +25,11 @@ abstract class TransactionType
     public const HEAT = 'HEAT';
 
     /*
+     * Printer usage.
+     */
+    public const PRINTING = 'PRINTING';
+
+    /*
      * Purchase of a members box.
      */
     public const MEMBER_BOX = 'BOX';
@@ -58,6 +63,7 @@ abstract class TransactionType
         self::TOOL => 'Tool',
         self::MEMBER_BOX => 'Box',
         self::HEAT => 'Heat',
+        self::PRINTING => 'Printing',
         self::CASH_PAYMENT => 'Cash Payment',
         self::ONLINE_PAYMENT => 'Online Payment',
         self::DD_PAYMENT => 'Direct Debit Payment',

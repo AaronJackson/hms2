@@ -39,4 +39,5 @@ class PrintingController extends Controller
             'user' => Auth::user()
         ]);
     }
+
 }

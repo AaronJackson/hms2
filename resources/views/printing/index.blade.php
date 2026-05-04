@@ -21,8 +21,11 @@
       <tbody>
         @foreach ($printers as $printer)
         <tr>
-          <td data-title="Name">{{ $printer->getName() }}</td>
-          <td data-title="Cost per Page">
+          <td data-title="Name">
+
+            {{ $printer->getPrinterName() }}
+          </td>
+          <td>
             @if ($printer->getCostA4Black())
             @money($printer->getCostA4Black(), 'GBP')
             @endif
@@ -44,6 +47,9 @@
           </td>
           <td data-title="IPP URI">
             <div class="input-group">
+              <div class="input-group-prepend">
+                 <span class="input-group-text" id="basic-addon1"><i class="far fa-print"></span></i>
+              </div>
               <input type="url" class="form-control" id="ippUri{{ $printer->getPrinterId() }}" value="{{ route('ipp.user', $printer->getUserEndpoint($user)) }}" disabled>
                <div class="input-group-append">
                  <button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('#ippUri{{ $printer->getPrinterId() }}')"><i class="far fa-copy"></i></button>

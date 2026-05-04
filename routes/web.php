@@ -113,6 +113,7 @@ Route::middleware(['ipcheck'])->group(function () {
 // IPP Printing
 Route::middleware(['ipcheck'])->group(function () {
     Route::post('ipp/print/{jwt}', [IPPController::class, 'print'])->name('ipp.user');
+    Route::get('ipp/print/{jwt}', [IPPController::class, 'print']);
 });
 
 // Routes in the following group can only be access once logged-in

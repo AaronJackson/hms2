@@ -15,6 +15,7 @@
         "doctrine/inflector": "^1.4|^2.0",
         "garygreen/pretty-routes": "^1.0.10",
         "gedmo/doctrine-extensions": "^3.3",
+        "gravitymedia/ghostscript": "v2.4",
         "guzzlehttp/guzzle": "^7.2",
         "karpy47/php-mqtt-client": "^1.0.4",
         "laracasts/flash": "^3.0",

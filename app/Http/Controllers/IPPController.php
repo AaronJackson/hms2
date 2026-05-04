@@ -5,72 +5,89 @@ namespace App\Http\Controllers;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use HMS\Entities\Role;
-use HMS\Repositories\RoleRepository;
+use HMS\Entities\User;
+use HMS\Entities\Snackspace\Transaction;
+use HMS\Entities\Snackspace\TransactionType;
+use HMS\Entities\Snackspace\TransactionState;
+use HMS\Entities\Printers\Printer;
+use HMS\Entities\Printers\PrinterJob;
+use HMS\Repositories\UserRepository;
+use HMS\Repositories\Printers\PrinterRepository;
+use HMS\Repositories\Snackspace\TransactionRepository;
+use HMS\Helpers\IPPPrinter;
 
 class IPPController extends Controller
 {
     /**
-     * @var RoleRepository
+     * @var PrinterRepository
      */
-    protected $roleRepository;
+    protected $printerRepository;
+    protected $userRepository;
+    protected $transactionRepository;
 
     /**
      * Create a new controller instance.
      *
-     * @param RoleRepository $roleRepository
+     * @param PrinterRepository $printerRepository
      */
     public function __construct(
-        RoleRepository $roleRepository
+        PrinterRepository $printerRepository,
+        UserRepository $userRepository,
+        TransactionRepository $transactionRepository,
     ) {
-        $this->roleRepository = $roleRepository;
+        $this->printerRepository = $printerRepository;
+        $this->userRepository = $userRepository;
+        $this->transactionRepository = $transactionRepository;
     }
 
     public function print($jwt)
     {
-        //$decoded = JWT::decode($jwt, new Key('123412341234123412341234123412341234', 'HS256'));
+        $key = config('hms.printers_key', null);
+        $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
-        $hSource = fopen('php://input', 'r');
-        $body = '';
+        $user = $this->userRepository->findOneById((int)$decoded->u);
+        $printer = $this->printerRepository->findOneByPrinterId((int)$decoded->p);
 
-        while (!feof($hSource)) {
-            $chunk = fread($hSource, 1024);
-            $body .= $chunk;
-        }
-        fclose($hSource);
-
-        $content = file_get_contents('php://input');
-
-        // We need to replace the printer-uri attribute. This is made up of its length followed by the string.
-        // The server uses this name to identify which printer it the job should go to.
-        $len = strlen('http://172.19.0.1:8080/ipp/print/' . $jwt);
-        if ($len > 255) return;
-        $newLen = strlen('https://10.0.0.98/');
-        $content = str_replace(chr($len) . 'http://172.19.0.1:8080/ipp/print/' . $jwt, chr($newLen) . 'https://10.0.0.98/', $content);
-
-        $ippPayload = new \obray\ipp\transport\IPPPayload();
-        $ippPayload->decode($content);
-        if ($ippPayload->document) {
-            $document = $ippPayload->document;
-            file_put_contents('/tmp/printlog', $document);
+        if (! $user || ! $printer) {
+            return response('Invalid Printer URL', 404);
         }
 
-        $options = [
-            'http' => [
-                'method' => 'POST',
-                'header' => 'Content-Type: application/ipp',
-                'content' => $content
-            ],
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false
-            ]
-        ];
+        $helper = new IPPPrinter(file_get_contents('php://input'), $printer);
 
-        $context = stream_context_create($options);
-        $url = 'https://10.0.0.98/';
+        // We need to update the 'printer-uri' attribute (at least for a CUPS target...)
+        $oldIppAddress = route('ipp.user', $printer->getUserEndpoint($user));
+        $newIppAddress = $printer->getIppUri();
+        $helper->updatePrinterUri($oldIppAddress, $newIppAddress);
 
-        $fp = fopen($url, 'r', false, $context);
-        fpassthru($fp);
-        fclose($fp);
+        // If it doesn't have a document, it's probably a Get-Status command or similar.
+        if ($helper->hasDocument()) {
+            // We're only doing PDF for now...
+            if (! $helper->validatePdfJob()) {
+                return response('Invalid document', 400)->header('Content-Type', 'application/ipp');
+            }
+
+            $printerJob = $helper->bodyToJob();
+            if ($printerJob) {
+                if ($printerJob->getCost()) {
+                    $transaction = new Transaction($user, -$printerJob->getCost(), TransactionState::COMPLETE);
+                    $transaction->setDescription((string)$printerJob);
+                    $transaction->setType(TransactionType::PRINTING);
+                    $this->transactionRepository->saveAndUpdateBalance($transaction);
+                }
+            }
+        }
+        $response = $printer->forward($helper->getBody());
+
+        if ($helper->isGetPrinterAttributes()) {
+            // I know...
+            preg_match('/document-format-supported\x{0}([\x{0}-\x{FF}]([a-zA-Z0-9\/\-\.]*)(\x{49}\x{0}*|\x{33}))*/', $response, $output);
+            if (sizeof($output) > 0) {
+                $supportedMime = 'application/pdf';
+                $newSupported = 'document-format-supported' . chr(0) . chr(strlen($supportedMime)) . $supportedMime . chr(0x33);
+                $response = str_replace($output[0], $newSupported, $response);
+            }
+        }
+
+        return response($response, 200)->header('Content-Type', 'application/ipp');
     }
 }
