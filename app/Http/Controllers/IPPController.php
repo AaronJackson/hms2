@@ -80,12 +80,34 @@ class IPPController extends Controller
 
         if ($helper->isGetPrinterAttributes()) {
             // I know...
-            preg_match('/document-format-supported\x{0}([\x{0}-\x{FF}]([a-zA-Z0-9\/\-\.]*)(\x{49}\x{0}*|\x{33}))*/', $response, $output);
-            if (sizeof($output) > 0) {
-                $supportedMime = 'application/pdf';
-                $newSupported = 'document-format-supported' . chr(0) . chr(strlen($supportedMime)) . $supportedMime . chr(0x33);
-                $response = str_replace($output[0], $newSupported, $response);
+            $inAttributeValues = false;
+            $r = $response;
+            $start = strpos($r, 'document-format-supported');
+            $end = 0;
+            for ($i = $start; $i < strlen($r); $i++){
+                if (!$inAttributeValues && $r[$i] == chr(0x00)) {
+                    $inAttributeValues = true;
+                    continue;
+                }
+
+                if ($inAttributeValues) {
+                    $valueLen = ord($r[$i]);
+                    $i += $valueLen + 1;
+
+                    if ($r[$i] == chr(0x49)) {
+                        $i += 3; // continue to next attribute
+                        continue;
+                    }
+
+                    if ($r[$i] == chr(0x41) || $r[$i] = '"') {
+                        break; // end of attributes
+                    }
+                }
             }
+
+            $supportedMime = 'application/pdf';
+            $response = substr($r, 0, $start) . 'document-format-supported' . chr(0) . chr(strlen($supportedMime))
+                      . $supportedMime . substr($response, $i);
         }
 
         return response($response, 200)->header('Content-Type', 'application/ipp');

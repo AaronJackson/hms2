@@ -138,8 +138,6 @@ class IPPPrinter
                 $printerJob->setJobName($pclAttributes['Name']);
             }
 
-            file_put_contents('/tmp/attrib', print_r($pclAttributes, true));
-
             $ghostscript = new Ghostscript([
                 'quiet' => false
             ]);
@@ -157,11 +155,6 @@ class IPPPrinter
             $bwPages = 0;
             $colourPages = 0;
             foreach ($cmyk as $page) {
-                if (array_key_exists('RENDERMODE', $pclAttributes) && $pclAttributes['RENDERMODE'] == 'GRAYSCALE') {
-                    $bwPages++;
-                    continue;
-                }
-
                 preg_match('/ ([0-9\.]{7})  ([0-9\.]{7})  ([0-9\.]{7})  ([0-9\.]{7}) /', $page, $cmykCoverage);
                 if (sizeof($cmykCoverage) != 5) {
                     throw new Exception('GhostScript CMYK Formatting issue');
