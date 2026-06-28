@@ -45,7 +45,7 @@ return [
         'RoleUpdate',
         'LabelTemplate',
         'Printers\Printer',
-        //'Printers\PrinterJob',
+        'Printers\PrinterJob',
         'Gatekeeper\Building',
         'Gatekeeper\BookableArea',
         'Gatekeeper\Pin',

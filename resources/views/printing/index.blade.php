@@ -22,7 +22,6 @@
         @foreach ($printers as $printer)
         <tr>
           <td data-title="Name">
-
             {{ $printer->getPrinterName() }}
           </td>
           <td>
@@ -63,6 +62,54 @@
         @endforeach
       </tbody>
     </table>
+
+    <br>
+    <h4>Job History</h4>
+    <p>Here's all of your previous jobs - for billing information see the Snackspace tab.</p>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Job Name</th>
+          <th>Printer</th>
+          <th>A4 BW</th>
+          <th>A4 Colour</th>
+          <th>A3 BW</th>
+          <th>A3 Colour</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($printerJobs as $printerJob)
+        <tr>
+          <td data-title="Name">
+            {{ $printerJob->getJobName() }}
+          </td>
+          <td data-title="Printer">
+            {{ $printerJob->getPrinter()->getPrinterName() }}
+          </td>
+          <td>
+            {{ $printerJob->getPagesA4Black() }}
+          </td>
+          <td>
+            {{ $printerJob->getPagesA4Colour() }}
+          </td>
+          <td>
+            {{ $printerJob->getPagesA3Black() }}
+          </td>
+          <td>
+            {{ $printerJob->getPagesA3Colour() }}
+          </td>
+          <td data-title="Date">
+            {{ $printerJob->getCreatedAt() }}
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+    <div classs="pagination-links">
+      {{ $printerJobs->links() }}
+    </div>
+
   </div>
 </div>
 @endsection
