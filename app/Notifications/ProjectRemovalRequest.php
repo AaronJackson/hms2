@@ -57,7 +57,7 @@ class ProjectRemovalRequest extends Notification implements ShouldQueue
         $trusteesTeamRole = $roleRepository->findOneByName(Role::TEAM_TRUSTEES);
 
         return (new MailMessage)
-            ->subject(config('branding.space_name') . ': Torts (Interference with Goods) Act 1977 - Removal requested')
+            ->subject(config('branding.space_name') . ': Project removal request')
             ->from($trusteesTeamRole->getEmail())
             ->markdown(
                 'emails.membership.projectRemoval',

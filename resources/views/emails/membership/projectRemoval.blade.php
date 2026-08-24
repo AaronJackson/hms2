@@ -1,5 +1,5 @@
 @component('mail::message')
-# Dear {{ $fullname }},
+# Hello {{ $fullname }},
 
 @content('emails.project.tort', 'main')
 
