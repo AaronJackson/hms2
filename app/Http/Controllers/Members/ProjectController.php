@@ -124,6 +124,7 @@ class ProjectController extends Controller
         $this->validate($request, [
             'projectName' => 'required|string|max:100',
             'description' => 'required|string',
+            'agreeToRules' => 'required|boolean',
         ]);
 
         $project = $this->projectFactory->create($request->projectName, $request->description);
