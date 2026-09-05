@@ -1,0 +1,234 @@
+<?php
+
+namespace HMS\Entities\Printers;
+
+// This class is based entirely off the node ipp-encoder package constants
+// https://npmx.dev/package-code/ipp-encoder/v/5.0.0/constants.js
+abstract class IPPTypes
+{
+  // Values
+  public const FALSE = 0x00;
+  public const TRUE = 0x01;
+
+  // Operation IDs
+  public const PRINT_JOB = 0x02;
+  public const PRINT_URI = 0x03;
+  public const VALIDATE_JOB = 0x04;
+  public const CREATE_JOB = 0x05;
+  public const SEND_DOCUMENT = 0x06;
+  public const SEND_URI = 0x07;
+  public const CANCEL_JOBS = 0x08;
+  public const GET_JOB_ATTRIBUTES = 0x09;
+  public const GET_JOBS = 0x0a;
+  public const GET_PRINTER_ATTRIBUTES = 0x0b;
+  public const HOLD_JOB = 0x0c;
+  public const RELEASE_JOB = 0x0d;
+  public const RESTART_JOB = 0x0e;
+  public const PAUSE_PRINTER = 0x10;
+  public const RESUME_PRINTER = 0x11;
+  public const PURGE_JOBS = 0x12;
+
+  // Delimter Tags
+  public const OPERATION_ATTRIBUTES_TAG = 0x01;
+  public const JOB_ATTRIBUTES_TAG = 0x02;
+  public const END_OF_ATTRIBUTES_TAG = 0x03;
+  public const PRINTER_ATTRIBUTES_TAG = 0x04;
+  public const UNSUPPORTED_ATTRIBUTES_TAG = 0x05;
+
+  // Value Tags (out-of-band)
+  public const UNSUPPORTED = 0x10;
+  public const UNKNOWN = 0x12;
+  public const NO_VALUE = 0x13;
+
+  // Value Tags (integer)
+  public const INTEGER = 0x21;
+  public const BOOLEAN = 0x22;
+  public const ENUM = 0x23;
+
+  // Value Tags (octet-string)
+  public const OCTET_STRING = 0x30; // with unspecified format
+  public const DATE_TIME = 0x31;
+  public const RESOLUTION = 0x32;
+  public const RANGE_OF_INTEGER = 0x33;
+  public const BEGIN_COLLECTION = 0x34;
+  public const TEXT_WITH_LANG = 0x35;
+  public const NAME_WITH_LANG = 0x36;
+  public const END_COLLECTION = 0x37;
+
+  // Value Tags (character-string)
+  public const TEXT_WITHOUT_LANG = 0x41;
+  public const NAME_WITHOUT_LANG = 0x42;
+  public const KEYWORD = 0x44;
+  public const URI = 0x45;
+  public const URI_SCHEME = 0x46;
+  public const CHARSET = 0x47;
+  public const NATURAL_LANG = 0x48;
+  public const MIME_MEDIA_TYPE = 0x49;
+  public const MEMBER = 0x4a;
+
+  // Successful Status Codes
+  public const SUCCESSFUL_OK = 0x0000;
+  public const SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES = 0x0001;
+  public const SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES = 0x0002;
+
+  // Client Error Status Codes
+  public const CLIENT_ERROR_BAD_REQUEST = 0x0400;
+  public const CLIENT_ERROR_FORBIDDEN = 0x0401;
+  public const CLIENT_ERROR_NOT_AUTHENTICATED = 0x0402;
+  public const CLIENT_ERROR_NOT_AUTHORIZED = 0x0403;
+  public const CLIENT_ERROR_NOT_POSSIBLE = 0x0404;
+  public const CLIENT_ERROR_TIMEOUT = 0x0405;
+  public const CLIENT_ERROR_NOT_FOUND = 0x0406;
+  public const CLIENT_ERROR_GONE = 0x0407;
+  public const CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE = 0x0408;
+  public const CLIENT_ERROR_REQUEST_VALUE_TOO_LONG = 0x0409;
+  public const CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED = 0x040a;
+  public const CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED = 0x040b;
+  public const CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED = 0x040c;
+  public const CLIENT_ERROR_CHARSET_NOT_SUPPORTED = 0x040d;
+  public const CLIENT_ERROR_CONFLICTING_ATTRIBUTES = 0x040e;
+  public const CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED = 0x040f;
+  public const CLIENT_ERROR_COMPRESSION_ERROR = 0x0410;
+  public const CLIENT_ERROR_DOCUMENT_FORMAT_ERROR = 0x0411;
+  public const CLIENT_ERROR_DOCUMENT_ACCESS_ERROR = 0x0412;
+
+  // Server Error Status Codes
+  public const SERVER_ERROR_INTERNAL_ERROR = 0x0500;
+  public const SERVER_ERROR_OPERATION_NOT_SUPPORTED = 0x0501;
+  public const SERVER_ERROR_SERVICE_UNAVAILABLE = 0x0502;
+  public const SERVER_ERROR_VERSION_NOT_SUPPORTED = 0x0503;
+  public const SERVER_ERROR_DEVICE_ERROR = 0x0504;
+  public const SERVER_ERROR_TEMPORARY_ERROR = 0x0505;
+  public const SERVER_ERROR_NOT_ACCEPTING_JOBS = 0x0506;
+  public const SERVER_ERROR_BUSY = 0x0507;
+  public const SERVER_ERROR_JOB_CANCELED = 0x0508;
+  public const SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED = 0x0509;
+
+  // Printer states
+  public const PRINTER_IDLE = 3;
+  public const PRINTER_PROCESSING = 4;
+  public const PRINTER_STOPPED = 5;
+
+  // Job states
+  public const JOB_PENDING = 3;
+  public const JOB_PENDING_HELD = 4;
+  public const JOB_PROCESSING = 5;
+  public const JOB_PROCESSING_STOPPED = 6;
+  public const JOB_CANCELED = 7;
+  public const JOB_ABORTED = 8;
+  public const JOB_COMPLETED = 9;
+
+  public const TYPE_STRINGS = [
+    // Values
+    self::FALSE => "FALSE",
+    self::TRUE => "TRUE",
+
+    // Operation IDs
+    self::PRINT_JOB => "PRINT_JOB",
+    self::PRINT_URI => "PRINT_URI",
+    self::VALIDATE_JOB => "VALIDATE_JOB",
+    self::CREATE_JOB => "CREATE_JOB",
+    self::SEND_DOCUMENT => "SEND_DOCUMENT",
+    self::SEND_URI => "SEND_URI",
+    self::CANCEL_JOBS => "CANCEL_JOBS",
+    self::GET_JOB_ATTRIBUTES => "GET_JOB_ATTRIBUTES",
+    self::GET_JOBS => "GET_JOBS",
+    self::GET_PRINTER_ATTRIBUTES => "GET_PRINTER_ATTRIBUTES",
+    self::HOLD_JOB => "HOLD_JOB",
+    self::RELEASE_JOB => "RELEASE_JOB",
+    self::RESTART_JOB => "RESTART_JOB",
+    self::PAUSE_PRINTER => "PAUSE_PRINTER",
+    self::RESUME_PRINTER => "RESUME_PRINTER",
+    self::PURGE_JOBS => "PURGE_JOBS",
+
+    // Delimter Tags
+    self::OPERATION_ATTRIBUTES_TAG => "OPERATION_ATTRIBUTES_TAG",
+    self::JOB_ATTRIBUTES_TAG => "JOB_ATTRIBUTES_TAG",
+    self::END_OF_ATTRIBUTES_TAG => "END_OF_ATTRIBUTES_TAG",
+    self::PRINTER_ATTRIBUTES_TAG => "PRINTER_ATTRIBUTES_TAG",
+    self::UNSUPPORTED_ATTRIBUTES_TAG => "UNSUPPORTED_ATTRIBUTES_TAG",
+
+    // Value Tags (out of band)
+    self::UNSUPPORTED => "UNSUPPORTED",
+    self::UNKNOWN => "UNKNOWN",
+    self::NO_VALUE => "NO_VALUE",
+
+    // Value Tags (integer)
+    self::INTEGER => "INTEGER",
+    self::BOOLEAN => "BOOLEAN",
+    self::ENUM => "ENUM",
+
+    // Value Tags (octet-string)
+    self::OCTET_STRING => "OCTET_STRING",
+    self::DATE_TIME => "DATE_TIME",
+    self::RESOLUTION => "RESOLUTION",
+    self::RANGE_OF_INTEGER => "RANGE_OF_INTEGER",
+    self::BEGIN_COLLECTION => "BEGIN_COLLECTION",
+    self::TEXT_WITH_LANG => "TEXT_WITH_LANG",
+    self::NAME_WITH_LANG => "NAME_WITH_LANG",
+    self::END_COLLECTION => "END_COLLECTION",
+
+    // Value Tags (character-string)
+    self::TEXT_WITHOUT_LANG => "TEXT_WITHOUT_LANG",
+    self::NAME_WITHOUT_LANG => "NAME_WITHOUT_LANG",
+    self::KEYWORD => "KEYWORD",
+    self::URI => "URI",
+    self::URI_SCHEME => "URI_SCHEME",
+    self::CHARSET => "CHARSET",
+    self::NATURAL_LANG => "NATURAL_LANG",
+    self::MIME_MEDIA_TYPE => "MIME_MEDIA_TYPE",
+    self::MEMBER => "MEMBER",
+
+    // Successful Status Codes
+    self::SUCCESSFUL_OK => "SUCCESSFUL_OK",
+    self::SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES => "SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES",
+    self::SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES => "SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES",
+
+    // Client Error Status Codes
+    self::CLIENT_ERROR_BAD_REQUEST => "CLIENT_ERROR_BAD_REQUEST",
+    self::CLIENT_ERROR_FORBIDDEN => "CLIENT_ERROR_FORBIDDEN",
+    self::CLIENT_ERROR_NOT_AUTHENTICATED => "CLIENT_ERROR_NOT_AUTHENTICATED",
+    self::CLIENT_ERROR_NOT_AUTHORIZED => "CLIENT_ERROR_NOT_AUTHORIZED",
+    self::CLIENT_ERROR_NOT_POSSIBLE => "CLIENT_ERROR_NOT_POSSIBLE",
+    self::CLIENT_ERROR_TIMEOUT => "CLIENT_ERROR_TIMEOUT",
+    self::CLIENT_ERROR_NOT_FOUND => "CLIENT_ERROR_NOT_FOUND",
+    self::CLIENT_ERROR_GONE => "CLIENT_ERROR_GONE",
+    self::CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE => "CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE",
+    self::CLIENT_ERROR_REQUEST_VALUE_TOO_LONG => "CLIENT_ERROR_REQUEST_VALUE_TOO_LONG",
+    self::CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED => "CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED",
+    self::CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED => "CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED",
+    self::CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED => "CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED",
+    self::CLIENT_ERROR_CHARSET_NOT_SUPPORTED => "CLIENT_ERROR_CHARSET_NOT_SUPPORTED",
+    self::CLIENT_ERROR_CONFLICTING_ATTRIBUTES => "CLIENT_ERROR_CONFLICTING_ATTRIBUTES",
+    self::CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED => "CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED",
+    self::CLIENT_ERROR_COMPRESSION_ERROR => "CLIENT_ERROR_COMPRESSION_ERROR",
+    self::CLIENT_ERROR_DOCUMENT_FORMAT_ERROR => "CLIENT_ERROR_DOCUMENT_FORMAT_ERROR",
+    self::CLIENT_ERROR_DOCUMENT_ACCESS_ERROR => "CLIENT_ERROR_DOCUMENT_ACCESS_ERROR",
+
+    // Server Error Status Codes
+    self::SERVER_ERROR_INTERNAL_ERROR => "SERVER_ERROR_INTERNAL_ERROR",
+    self::SERVER_ERROR_OPERATION_NOT_SUPPORTED => "SERVER_ERROR_OPERATION_NOT_SUPPORTED",
+    self::SERVER_ERROR_SERVICE_UNAVAILABLE => "SERVER_ERROR_SERVICE_UNAVAILABLE",
+    self::SERVER_ERROR_VERSION_NOT_SUPPORTED => "SERVER_ERROR_VERSION_NOT_SUPPORTED",
+    self::SERVER_ERROR_DEVICE_ERROR => "SERVER_ERROR_DEVICE_ERROR",
+    self::SERVER_ERROR_TEMPORARY_ERROR => "SERVER_ERROR_TEMPORARY_ERROR",
+    self::SERVER_ERROR_NOT_ACCEPTING_JOBS => "SERVER_ERROR_NOT_ACCEPTING_JOBS",
+    self::SERVER_ERROR_BUSY => "SERVER_ERROR_BUSY",
+    self::SERVER_ERROR_JOB_CANCELED => "SERVER_ERROR_JOB_CANCELED",
+    self::SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED => "SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED",
+
+    // Printer states
+    self::PRINTER_IDLE => "PRINTER_IDLE",
+    self::PRINTER_PROCESSING => "PRINTER_PROCESSING",
+    self::PRINTER_STOPPED => "PRINTER_STOPPED",
+
+    // Job states
+    self::JOB_PENDING => "JOB_PENDING",
+    self::JOB_PENDING_HELD => "JOB_PENDING_HELD",
+    self::JOB_PROCESSING => "JOB_PROCESSING",
+    self::JOB_PROCESSING_STOPPED => "JOB_PROCESSING_STOPPED",
+    self::JOB_CANCELED => "JOB_CANCELED",
+    self::JOB_ABORTED => "JOB_ABORTED",
+    self::JOB_COMPLETED => "JOB_COMPLETED",
+  ];
+}
