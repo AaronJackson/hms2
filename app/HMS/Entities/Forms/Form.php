@@ -36,6 +36,10 @@ class Form
      */
     protected $maxResponses;
 
+    /*
+     * @var null|string
+     */
+    protected $notificationKey;
 
     /**
      * Create a new form
@@ -177,6 +181,30 @@ class Form
     public function setMaxResponses($maxResponses): self
     {
         $this->maxResponses = $maxResponses;
+
+        return $this;
+    }
+
+    /**
+     * Gets the form response key used for notification routing.
+     *
+     * @return null|string
+     */
+    public function getNotificationKey()
+    {
+        return $this->notificationKey;
+    }
+
+    /**
+     * Sets the form response key used for notification routing.
+     *
+     * @param string $notificationKey
+     *
+     * @return self
+     */
+    public function setNotificationkey($notificationKey): self
+    {
+        $this->notificationKey = $notificationKey;
 
         return $this;
     }

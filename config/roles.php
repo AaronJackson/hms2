@@ -147,7 +147,6 @@ return [
         'phones.view.directory.limited',
         'phones.view.directory.all',
         'forms.respond',
-        'forms.new',
         'forms.edit'
     ],
 

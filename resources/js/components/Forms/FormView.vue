@@ -4,6 +4,12 @@
   StylesManager.applyTheme("modern");
 
   export default {
+    props: {
+      formId: {
+        type: Number
+      }
+    },
+
     components: {
       Survey
     },
@@ -20,16 +26,23 @@
 
     methods: {
       async loadModel() {
-        let csrf =  document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        let modelJson = await fetch('/api/forms/1/model', {
-          headers: {
-            'Accept': 'application/json',
-            'X-CSRF-Token': csrf
-          }
+        $.ajax({
+          url: `/api/forms/${this.formId}/model`
+        }).done(response => {
+          this.survey = new Model(response);
+          this.survey.onComplete.add(this.submit)
         });
+      },
 
-        this.survey = new Model(await modelJson.json());
+      async submit(sender, options) {
+        $.ajax({
+          url: `/api/forms/${this.formId}/response`,
+          method: 'PUT',
+          contentType: 'application/json',
+          data: JSON.stringify(sender.data)
+        }).done(response => {
+          console.log(response);
+        });
       }
     },
   };

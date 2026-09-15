@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="container">
-<form-view />
+<form-view :form-id="{{ $form->getId() }}" />
 </div>
 
 @endsection

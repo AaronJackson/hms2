@@ -28,3 +28,6 @@ HMS\Entities\Forms\Form:
       options:
         default: 0
         unsigned: true
+    notificationKey:
+      type: string
+      nullable: true

@@ -88,5 +88,6 @@ return [
         'Instrumentation\Temperature',
         'Phones\PhoneExtension',
         'Forms\Form',
+        'Forms\FormResponse',
     ],
 ];
