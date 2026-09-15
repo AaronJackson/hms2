@@ -146,6 +146,9 @@ return [
         'phones.edit.all',
         'phones.view.directory.limited',
         'phones.view.directory.all',
+        'forms.respond',
+        'forms.new',
+        'forms.edit'
     ],
 
     /*
@@ -474,6 +477,7 @@ return [
                 'phones.edit.all',
                 'phones.view.all',
                 'phones.view.directory.all',
+                'forms.edit',
             ],
         ],
         'team.software' => [
