@@ -19,6 +19,10 @@ class FormResponse
 
     protected $hidden;
 
+    protected $createdAt;
+
+    protected $updatedAt;
+
     public function getId(): int
     {
         return $this->id;
@@ -64,7 +68,7 @@ class FormResponse
         return $this->comment;
     }
 
-    public function setComment(string $comment)
+    public function setComment($comment)
     {
         $this->comment = $comment;
 
@@ -82,4 +86,15 @@ class FormResponse
 
         return $this;
     }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
 }

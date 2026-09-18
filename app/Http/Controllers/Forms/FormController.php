@@ -5,21 +5,29 @@ namespace App\Http\Controllers\Forms;
 use App\Http\Controllers\Controller;
 use HMS\Repositories\Forms\FormRepository;
 use HMS\Repositories\Forms\FormResponseRepository;
+use HMS\Repositories\PermissionRepository;
+use HMS\Repositories\RoleRepository;
+use Illuminate\Http\Request;
 use HMS\Entities\Forms\Form;
+use LaravelDoctrine\ACL\Permissions\Permission;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class FormController extends Controller
 {
-    protected $formRepository;
-
-    protected $formResponseRepository;
-
     public function __construct(
-        FormRepository $formRepository,
-        FormResponseRepository $formResponseRepository
+        protected FormRepository $formRepository,
+        protected FormResponseRepository $formResponseRepository,
+        protected PermissionRepository $permissionRepository,
+        protected RoleRepository $roleRepository
     )
     {
         $this->formRepository = $formRepository;
         $this->formResponseRepository = $formResponseRepository;
+        $this->permissionRepository = $permissionRepository;
+        $this->roleRepository = $roleRepository;
+
+        $this->middleware('feature:forms');
     }
 
     /**
@@ -31,16 +39,218 @@ class FormController extends Controller
     {
         $forms = $this->formRepository->paginateAll();
 
-        return view('forms.index')->with('forms', $forms);
+        return view('forms.index')->with([
+            'forms' => $forms,
+            'formResponseRepository' => $this->formResponseRepository,
+        ]);
     }
 
     public function view(Form $form)
     {
+        if (Gate::none([
+            'forms.' . $form->getPermissionName() . '.respond',
+            'forms.respond'
+        ])) {
+            flash('You do not have permission to view to ' . $form->getName());
+            return redirect()->back();
+        }
+
+        if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) > $form->getMaxResponses()) {
+            flash('You have responded to this form more than the permitted number of times.');
+            return redirect()->back();
+        }
+
         return view('forms.view')->with('form', $form);
     }
 
-    public function responses(Form $form)
+    public function responses(Form $form, Request $request)
     {
-        return view('forms.responses')->with('form', $form);
+        if (Gate::none([
+            'forms.' . $form->getPermissionName() . '.viewResponses',
+            'forms.viewResponses'
+        ])) {
+            flash('You do not have permission to view responses to ' . $form->getName());
+            return redirect()->back();
+        }
+
+        $validatedData = $request->validate([
+            'perpage' => 'sometimes|integer',
+            'hidden' => 'sometimes|required',
+        ]);
+
+        $perPage = array_key_exists('perpage', $validatedData) ? $validatedData['perpage'] : 15;
+        $includeHidden = array_key_exists('hidden', $validatedData) && $validatedData['hidden'];
+
+        $formResponses = $this->formResponseRepository->paginateForForm($form, $includeHidden, $perPage);
+
+        $columns = [];
+        foreach ($formResponses->items() as $formResponse) {
+            // In cases where 'Other' has been selected for a multiple choice, a
+            // column suffixed with '-Comment' is added to the response.
+            $keys = array_filter(array_keys($formResponse->getResponseJson()), function ($column) {
+                return ! str_ends_with($column, '-Comment');
+            });
+
+            $columns = array_unique(array_merge($keys, $columns));
+        }
+
+        return view('forms.responses')->with([
+            'form' => $form,
+            'formResponses' => $formResponses,
+            'columns' => $columns,
+            'perpage' => $perPage,
+            'hidden' => $includeHidden,
+        ]);
+    }
+
+    public function newForm(Request $request)
+    {
+        if (Gate::denies('forms.edit')) {
+            flash('You do not have permission to create new forms');
+            return redirect()->back();
+        }
+
+        $form = new Form();
+
+        return view('forms.new')->with('form', $form);
+    }
+
+    public function createForm(Request $request)
+    {
+        if (Gate::denies('forms.edit')) {
+            flash('You do not have permission to create new forms');
+            return redirect()->back();
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|max:100',
+            'jsonDefinition' => 'required|json',
+            'maxResponses' => 'integer',
+            'notificationKey' => 'sometimes|nullable|string',
+            'permissionName' => 'string|required|lowercase|max:32'
+        ]);
+
+        $form = new Form();
+        $form->setName($validatedData['name']);
+        $form->setJsonDefinition(json_decode($request['jsonDefinition'], true));
+        $form->setMaxResponses($validatedData['maxResponses']);
+        $form->setNotificationkey($validatedData['notificationKey']);
+        $form->setPermissionName($validatedData['permissionName']);
+
+        $this->formRepository->save($form);
+
+        $permissionNames = ['respond', 'edit', 'viewResponses'];
+        foreach ($permissionNames as $permissionName) {
+            $permission = new Permission('forms.' . $form->getPermissionName() . '.' . $permissionName);
+            $this->permissionRepository->save($permission);
+        }
+
+        return redirect()->route('forms.index');
+    }
+
+    public function editForm(Form $form)
+    {
+        if (Gate::none([
+            'forms.edit',
+            'forms.' . $form->getPermissionName() . '.edit'
+        ])) {
+            flash('You do not have permission to edit ' . $form->getName());
+            return redirect()->back();
+        }
+
+        return view('forms.edit')->with('form', $form);
+    }
+
+    public function updateForm(Form $form, Request $request)
+    {
+        if (Gate::none([
+            'forms.edit',
+            'forms.' . $form->getPermissionName() . '.edit'
+        ])) {
+            flash('You do not have permission to edit ' . $form->getName());
+            return redirect()->back();
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|max:100',
+            'jsonDefinition' => 'required|json',
+            'maxResponses' => 'integer',
+            'notificationKey' => 'sometimes|nullable|string',
+        ]);
+
+        $form->setName($validatedData['name']);
+        $form->setJsonDefinition(json_decode($request['jsonDefinition'], true));
+        $form->setMaxResponses($validatedData['maxResponses']);
+        $form->setNotificationkey($validatedData['notificationKey']);
+
+        $this->formRepository->save($form);
+
+        return redirect()->route('forms.index');
+
+    }
+
+    public function permissions(Form $form, Request $request)
+    {
+        if (Gate::denies('forms.edit')) {
+            flash('You do not have permission to manage the permissions of ' . $form->getName());
+            return redirect()->back();
+        }
+
+        $roles = $this->roleRepository->findAll();
+
+        $respond = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.respond');
+        $edit = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.edit');
+        $viewResponses = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.viewResponses');
+
+        return view('forms.permissions')->with([
+            'form' => $form,
+            'roles' => $roles,
+            'permissionRespond' => $respond,
+            'permissionEdit' => $edit,
+            'permissionViewResponses' => $viewResponses,
+        ]);
+    }
+
+    public function updatePermissions(Form $form, Request $request)
+    {
+        if (Gate::denies('forms.edit')) {
+            flash('You do not have permission to manage the permissions of ' . $form->getName());
+            return redirect()->back();
+        }
+
+        $validatedData = $request->validate([
+            'respond' => 'required|sometimes|array|nullable',
+            'edit' => 'required|sometimes|array|nullable',
+            'viewResponses' => 'required|sometimes|array|nullable',
+        ]);
+
+        $respond = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.respond');
+        $edit = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.edit');
+        $viewResponses = $this->permissionRepository->findOneByName('forms.' . $form->getPermissionName() . '.viewResponses');
+
+        $roles = $this->roleRepository->findAll();
+        foreach ($roles as $role) {
+            if (isset($validatedData['respond']) && in_array($role->getName(), $validatedData['respond'])) {
+                $role->addPermission($respond);
+            } else {
+                $role->removePermission($respond);
+            }
+
+            if (isset($validatedData['edit']) && in_array($role->getName(), $validatedData['edit'])) {
+                $role->addPermission($edit);
+            } else {
+                $role->removePermission($edit);
+            }
+
+            if (isset($validatedData['viewResponses']) && in_array($role->getName(), $validatedData['viewResponses'])) {
+                $role->addPermission($viewResponses);
+            } else {
+                $role->removePermission($viewResponses);
+            }
+
+            $this->roleRepository->save($role);
+        }
+
+        return redirect()->route('forms.permissions', $form->getId());
     }
 }

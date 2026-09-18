@@ -11,4 +11,9 @@ class DoctrineFormRepository extends EntityRepository implements FormRepository
 {
     use PaginatesFromRequest;
 
+    public function save(Form $form)
+    {
+        $this->_em->persist($form);
+        $this->_em->flush();
+    }
 }

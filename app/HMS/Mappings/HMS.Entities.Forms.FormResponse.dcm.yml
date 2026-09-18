@@ -21,6 +21,16 @@ HMS\Entities\Forms\FormResponse:
       type: boolean
       options:
         default: 0
+    createdAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: create
+    updatedAt:
+      type: datetime
+      gedmo:
+        timestampable:
+          on: update
   manyToOne:
     form:
       targetEntity: Form

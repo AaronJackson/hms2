@@ -13,4 +13,6 @@ interface FormRepository
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function paginateAll($perPage = 15, $pageName = 'page');
+
+    public function save(Form $form);
 }

@@ -21,16 +21,6 @@ class Form
      */
     protected $jsonDefinition;
 
-    /**
-     * @var bool
-     */
-    protected $published;
-
-    /**
-     * @var null|Carbon
-     */
-    protected $archivedDate;
-
     /*
      * @var int
      */
@@ -41,18 +31,17 @@ class Form
      */
     protected $notificationKey;
 
+    /*
+     * @var string
+     */
+    protected $permissionName;
+
     /**
      * Create a new form
      *
-     * @param string $name
-     * @param string $jsonDefinition
      */
-    public function __construct(
-        string $name,
-        string $jsonDefinition
-    ) {
-        $this->name = $name;
-        $this->jsonDefinition = $jsonDefinition;
+    public function __construct() {
+
     }
 
     /**
@@ -60,7 +49,7 @@ class Form
      *
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -70,7 +59,7 @@ class Form
      *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -109,54 +98,6 @@ class Form
     public function setJsonDefinition($jsonDefinition): self
     {
         $this->jsonDefinition = $jsonDefinition;
-
-        return $this;
-    }
-
-    /**
-     * Gets the form's visibility / published status.
-     *
-     * @return bool
-     */
-    public function getPublished(): bool
-    {
-        return $this->published;
-    }
-
-    /**
-     * Sets the form's visibility / published status.
-     *
-     * @param string $published
-     *
-     * @return self
-     */
-    public function setPublished($published): self
-    {
-        $this->published = $published;
-
-        return $this;
-    }
-
-    /**
-     * Get the archived date.
-     *
-     * @return null|Carbon
-     */
-    public function getArchivedDate()
-    {
-        return $this->archivedDate;
-    }
-
-    /**
-     * Sets the date the form was archived.
-     *
-     * @param string $published
-     *
-     * @return self
-     */
-    public function setArchivedDate($archivedDate): self
-    {
-        $this->archivedDate = $archivedDate;
 
         return $this;
     }
@@ -205,6 +146,30 @@ class Form
     public function setNotificationkey($notificationKey): self
     {
         $this->notificationKey = $notificationKey;
+
+        return $this;
+    }
+
+    /**
+     * Gets the form permission name to delegate form edit/responses
+     *
+     * @return null|string
+     */
+    public function getPermissionName()
+    {
+        return $this->permissionName;
+    }
+
+    /**
+     * Sets the form permission name to delegate form edit/response.
+     *
+     * @param string $permissionName
+     *
+     * @return self
+     */
+    public function setPermissionName($permissionName): self
+    {
+        $this->permissionName = $permissionName;
 
         return $this;
     }

@@ -16,13 +16,6 @@ HMS\Entities\Forms\Form:
       length: 100
     jsonDefinition:
       type: json
-    published:
-      type: boolean
-      options:
-        default: 0
-    archivedDate:
-      type: datetime
-      nullable: true
     maxResponses:
       type: integer
       options:
@@ -31,3 +24,7 @@ HMS\Entities\Forms\Form:
     notificationKey:
       type: string
       nullable: true
+    permissionName:
+      type: string
+      length: 32
+

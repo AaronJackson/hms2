@@ -2,6 +2,7 @@
 
 namespace HMS\Repositories\Forms;
 
+use HMS\Entities\User;
 use HMS\Entities\Forms\Form;
 use HMS\Entities\Forms\FormResponse;
 
@@ -15,6 +16,9 @@ interface FormResponseRepository
      */
     public function paginateAll($perPage = 15, $pageName = 'page');
 
+    public function paginateForForm(Form $form, $perPage = 15, $pageName = 'page');
+
+    public function countUserResponsesForForm(Form $form, User $user);
 
     public function save(FormResponse $formResponse);
 

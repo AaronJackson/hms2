@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\Snackspace\VendingMachineController;
 use App\Http\Controllers\Api\SpaceApiController;
 use App\Http\Controllers\Api\Tools\BookingController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\Forms\FormController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -138,6 +139,12 @@ Route::name('api.')->group(function () {
             ->name('boxes.print');
         Route::apiResource('boxes', BoxController::class)
             ->except(['store', 'update', 'destroy']);
+
+        // Forms
+        Route::get('forms/{form}/model', [FormController::class, 'getModel'])->name('forms.model');
+        Route::put('forms/{form}/response', [FormController::class, 'putResponse'])->name('forms.respond');
+        Route::put('forms/responses/{formResponse}/comment', [FormController::class, 'putComment'])->name('forms.comment');
+        Route::put('forms/responses/{formResponse}/hide', [FormController::class, 'hideResponse'])->name('forms.hide');
     });
 });
 
