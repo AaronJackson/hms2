@@ -83,7 +83,12 @@
         @foreach ($columns as $column)
           <td>
           @if (array_key_exists($column, $formResponse->getResponseJson()))
+            @if (gettype($formResponse->getResponseJson()[$column]) === 'string')
             {{ $formResponse->getResponseJson()[$column] }}
+            @endif
+            @if (gettype($formResponse->getResponseJson()[$column]) === 'array')
+            {{ implode(', ', $formResponse->getResponseJson()[$column]) }}
+            @endif
             @if (array_key_exists($column . '-Comment', $formResponse->getResponseJson()))
             ({{ $formResponse->getResponseJson()[$column . '-Comment'] }})
             @endif
