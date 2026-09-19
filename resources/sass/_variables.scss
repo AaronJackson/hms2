@@ -27,6 +27,7 @@ $cyan:    #17a2b8 !default;
 $hackspace-green: #195905;
 $hackspace-gray: $gray-300;
 $hackspace-green-tint: tint($hackspace-green, 25%);
+$hackspace-green-slighttint: tint($hackspace-green, 75%);
 
 // Header
 $header-background-colour: $hackspace-green;
@@ -105,5 +106,5 @@ $font-family-base: 'Oxygen', -apple-system, BlinkMacSystemFont, "Segoe UI", Robo
 // Survey.js
 .sv-container-modern {
   --main-color: #{$hackspace-green};
-  --answer-background-color: #{$gray-100};
+  --answer-background-color: #{$hackspace-green-slighttint};
 }
