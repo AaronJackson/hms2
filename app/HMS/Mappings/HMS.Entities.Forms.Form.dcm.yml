@@ -27,4 +27,3 @@ HMS\Entities\Forms\Form:
     permissionName:
       type: string
       length: 32
-

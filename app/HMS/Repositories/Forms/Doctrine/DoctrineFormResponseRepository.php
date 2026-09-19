@@ -14,6 +14,16 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
 {
     use PaginatesFromRequest;
 
+    /**
+     * Paginates all forms.
+     *
+     * @param Form $form
+     * @param bool $includeArchived = false
+     * @param int $perPage = 15
+     * @param string $pageName = 'page'
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
     public function paginateForForm(Form $form, $includeArchived = false, $perPage = 15, $pageName = 'page')
     {
         $queryBuilder = $this->createQueryBuilder('responses');
@@ -32,6 +42,14 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
         return $this->paginate($query, $perPage, $pageName);
     }
 
+    /**
+     * Count the number of responses to a given form by a user.
+     *
+     * @param Form $form
+     * @param User $user
+     *
+     * @return int
+     */
     public function countUserResponsesForForm(Form $form, User $user)
     {
         $qb = parent::createQueryBuilder('responses')
@@ -43,6 +61,13 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * Commit the form response to the database.
+     *
+     * @param FormResponse $formResponse
+     *
+     * @return void
+     */
     public function save(FormResponse $formResponse)
     {
         $this->_em->persist($formResponse);

@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Auth;
 
 class FormController extends Controller
 {
+    /**
+     * Create a new instance of FormController.
+     *
+     * @param FormRepository $formRepository
+     * @param FormResponseRepository $formResponseRepository
+     * @param PermissionRepository $permissionRepository
+     * @param RoleRepository $roleRepository
+     */
     public function __construct(
         protected FormRepository $formRepository,
         protected FormResponseRepository $formResponseRepository,
@@ -31,7 +39,7 @@ class FormController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the form listing.
      *
      * @return \Illuminate\Http\Response
      */
@@ -45,6 +53,13 @@ class FormController extends Controller
         ]);
     }
 
+    /**
+     * Render a specific form.
+     *
+     * @param Form $form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function view(Form $form)
     {
         if (Gate::none([
@@ -63,6 +78,13 @@ class FormController extends Controller
         return view('forms.view')->with('form', $form);
     }
 
+    /**
+     * Display responses to a sepcific form.
+     *
+     * @param Form $form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function responses(Form $form, Request $request)
     {
         if (Gate::none([
@@ -103,6 +125,13 @@ class FormController extends Controller
         ]);
     }
 
+    /**
+     * Display the form to make a new form.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function newForm(Request $request)
     {
         if (Gate::denies('forms.edit')) {
@@ -115,6 +144,13 @@ class FormController extends Controller
         return view('forms.new')->with('form', $form);
     }
 
+    /**
+     * Handle the creation of a new form.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function createForm(Request $request)
     {
         if (Gate::denies('forms.edit')) {
@@ -148,6 +184,13 @@ class FormController extends Controller
         return redirect()->route('forms.index');
     }
 
+    /**
+     * Display the form to edit a form.
+     *
+     * @param Form $form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function editForm(Form $form)
     {
         if (Gate::none([
@@ -161,6 +204,14 @@ class FormController extends Controller
         return view('forms.edit')->with('form', $form);
     }
 
+    /**
+     * Handle the update of a form
+     *
+     * @param Form $form
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function updateForm(Form $form, Request $request)
     {
         if (Gate::none([
@@ -186,9 +237,16 @@ class FormController extends Controller
         $this->formRepository->save($form);
 
         return redirect()->route('forms.index');
-
     }
 
+    /**
+     * Display the page for managing a form's permissions.
+     *
+     * @param Form $form
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function permissions(Form $form, Request $request)
     {
         if (Gate::denies('forms.edit')) {
@@ -211,6 +269,14 @@ class FormController extends Controller
         ]);
     }
 
+    /**
+     * Handle updates to a form's permissions.
+     *
+     * @param Form $form
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function updatePermissions(Form $form, Request $request)
     {
         if (Gate::denies('forms.edit')) {

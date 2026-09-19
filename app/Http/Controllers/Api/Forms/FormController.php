@@ -12,7 +12,6 @@ use HMS\Repositories\TeamRepository;
 use HMS\Entities\Forms\Form;
 use HMS\Entities\Forms\FormResponse;
 use HMS\Entities\User;
-use App\Http\Resources\Forms\FormResponseResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -37,11 +36,15 @@ class FormController extends Controller
         $this->toolRepository = $toolRepository;
 
         $this->middleware('feature:forms');
-
-        $this->middleware('can:forms.respond')->only(['getModel', 'putResponse']);
-        $this->middleware('can:forms.viewResponses')->only(['putComment', 'hideResponse']);
     }
 
+    /**
+     * Retrieve a form JSON definition.
+     *
+     * @param Form $form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getModel(Form $form)
     {
         if (Gate::none([
@@ -80,6 +83,13 @@ class FormController extends Controller
         return response()->json($model);
     }
 
+    /**
+     * Submit a response to a form.
+     *
+     * @param Form $form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function putResponse(Form $form, Request $request)
     {
         if (Gate::none([
@@ -130,6 +140,14 @@ class FormController extends Controller
         }
     }
 
+    /**
+     * Amend a form response with a comment.
+     *
+     * @param FormResponse $formResponse
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function putComment(FormResponse $formResponse, Request $request)
     {
         $form = $this->formRepository->findOneById($formResponse->getForm()->getId());
@@ -149,6 +167,14 @@ class FormController extends Controller
         $this->formResponseRepository->save($formResponse);
     }
 
+    /**
+     * Hide a response from the default listing.
+     *
+     * @param FormResponse $formResponse
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function hideResponse(FormResponse $formResponse, Request $request)
     {
         $form = $this->formRepository->findOneById($formResponse->getForm()->getId());

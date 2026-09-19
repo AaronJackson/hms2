@@ -14,5 +14,12 @@ interface FormRepository
      */
     public function paginateAll($perPage = 15, $pageName = 'page');
 
+    /**
+     * Save an instance of Form.
+     *
+     * @param Form $form
+     *
+     * @return void
+     */
     public function save(Form $form);
 }

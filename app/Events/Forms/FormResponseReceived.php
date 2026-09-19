@@ -41,8 +41,19 @@ class FormResponseReceived
         $this->formResponse = $formResponse;
     }
 
+    /**
+     * Set the role for this notification
+     *
+     * Hypothetically, other notification targets are supported, so this is optional.
+     *
+     * @param Role $role
+     *
+     * @return self
+     */
     public function setRole(Role $role)
     {
         $this->role = $role;
+
+        return $this;
     }
 }
