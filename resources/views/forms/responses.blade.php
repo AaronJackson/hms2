@@ -83,10 +83,20 @@
         @foreach ($columns as $column)
           <td>
           @if (array_key_exists($column, $formResponse->getResponseJson()))
+          @if (gettype($formResponse->getResponseJson()[$column]) === 'boolean')
+            {{ $formResponse->getResponseJson()[$column] ? 'Yes' : 'No' }}
+          @elseif (gettype($formResponse->getResponseJson()[$column]) === 'string')
+          @if (str_starts_with($formResponse->getResponseJson()[$column], 'data:image/'))
+            <img width="100" src="{{ $formResponse->getResponseJson()[$column]  }}" />
+          @else
             {{ $formResponse->getResponseJson()[$column] }}
-            @if (array_key_exists($column . '-Comment', $formResponse->getResponseJson()))
+          @endif
+          @elseif (gettype($formResponse->getResponseJson()[$column]) === 'array')
+            {{ implode(', ', $formResponse->getResponseJson()[$column]) }}
+          @endif
+          @if (array_key_exists($column . '-Comment', $formResponse->getResponseJson()))
             ({{ $formResponse->getResponseJson()[$column . '-Comment'] }})
-            @endif
+          @endif
           @endif
           </td>
         @endforeach
