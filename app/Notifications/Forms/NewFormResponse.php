@@ -2,11 +2,11 @@
 
 namespace App\Notifications\Forms;
 
-use HMS\Entities\Role;
-use HMS\Entities\Forms\Form;
-use HMS\Entities\Forms\FormResponse;
 use App\Notifications\NotificationSensitivityInterface;
 use App\Notifications\NotificationSensitivityType;
+use HMS\Entities\Forms\Form;
+use HMS\Entities\Forms\FormResponse;
+use HMS\Entities\Role;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

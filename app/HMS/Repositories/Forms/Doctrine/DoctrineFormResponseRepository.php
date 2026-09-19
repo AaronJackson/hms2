@@ -3,10 +3,9 @@
 namespace HMS\Repositories\Forms\Doctrine;
 
 use Doctrine\ORM\EntityRepository;
-use HMS\Entities\User;
 use HMS\Entities\Forms\Form;
 use HMS\Entities\Forms\FormResponse;
-use HMS\Repositories\Forms\FormRepository;
+use HMS\Entities\User;
 use HMS\Repositories\Forms\FormResponseRepository;
 use LaravelDoctrine\ORM\Pagination\PaginatesFromRequest;
 
@@ -30,7 +29,7 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
 
         $hiddenQuery = '';
         if (! $includeArchived) {
-            $hiddenQuery .= " and responses.hidden = false";
+            $hiddenQuery .= ' and responses.hidden = false';
         }
 
         $queryBuilder->where('responses.form = :form_id' . $hiddenQuery);

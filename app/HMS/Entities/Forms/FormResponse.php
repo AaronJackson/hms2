@@ -2,8 +2,8 @@
 
 namespace HMS\Entities\Forms;
 
-use HMS\Entities\User;
 use Carbon\Carbon;
+use HMS\Entities\User;
 
 class FormResponse
 {
@@ -98,7 +98,8 @@ class FormResponse
      *
      * @return self
      */
-    public function setResponder(User $responder) {
+    public function setResponder(User $responder)
+    {
         $this->responder = $responder;
 
         return $this;
@@ -195,5 +196,4 @@ class FormResponse
     {
         return $this->updatedAt;
     }
-
 }

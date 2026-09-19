@@ -3,7 +3,7 @@
 namespace App\Listeners\Forms;
 
 use App\Events\Forms\FormResponseReceived;
-use App\Notifications\Forms\NewFormResponse;;
+use App\Notifications\Forms\NewFormResponse;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NotifyTeamOnFormResponse implements ShouldQueue

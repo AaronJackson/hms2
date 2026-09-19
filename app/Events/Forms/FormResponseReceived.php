@@ -5,7 +5,6 @@ namespace App\Events\Forms;
 use HMS\Entities\Forms\Form;
 use HMS\Entities\Forms\FormResponse;
 use HMS\Entities\Role;
-use HMS\Entities\User;
 use Illuminate\Queue\SerializesModels;
 
 class FormResponseReceived
@@ -42,7 +41,7 @@ class FormResponseReceived
     }
 
     /**
-     * Set the role for this notification
+     * Set the role for this notification.
      *
      * Hypothetically, other notification targets are supported, so this is optional.
      *

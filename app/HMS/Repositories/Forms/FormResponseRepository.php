@@ -2,9 +2,9 @@
 
 namespace HMS\Repositories\Forms;
 
-use HMS\Entities\User;
 use HMS\Entities\Forms\Form;
 use HMS\Entities\Forms\FormResponse;
+use HMS\Entities\User;
 
 interface FormResponseRepository
 {
@@ -46,5 +46,4 @@ interface FormResponseRepository
      * @return void
      */
     public function save(FormResponse $formResponse);
-
 }

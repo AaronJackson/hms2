@@ -11,6 +11,7 @@ use App\Http\Controllers\Banking\BankTransactionController;
 use App\Http\Controllers\ContentBlockController;
 use App\Http\Controllers\CSVDownloadController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\Forms\FormController;
 use App\Http\Controllers\Gatekeeper\AccessController;
 use App\Http\Controllers\Gatekeeper\AccessLogController;
 use App\Http\Controllers\Gatekeeper\BookableAreaController;
@@ -44,7 +45,6 @@ use App\Http\Controllers\Tools\ToolController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Forms\FormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -439,5 +439,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{form}/permissions', [FormController::class, 'permissions'])->name('permissions');
         Route::post('{form}/permissions', [FormController::class, 'updatePermissions'])->name('updatePermissions');
     });
-
 });

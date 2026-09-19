@@ -4,18 +4,16 @@ namespace App\Http\Controllers\Api\Forms;
 
 use App\Events\Forms\FormResponseReceived;
 use App\Http\Controllers\Controller;
+use HMS\Entities\Forms\Form;
+use HMS\Entities\Forms\FormResponse;
 use HMS\Repositories\Forms\FormRepository;
 use HMS\Repositories\Forms\FormResponseRepository;
 use HMS\Repositories\RoleRepository;
 use HMS\Repositories\Tools\ToolRepository;
-use HMS\Repositories\TeamRepository;
-use HMS\Entities\Forms\Form;
-use HMS\Entities\Forms\FormResponse;
-use HMS\Entities\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class FormController extends Controller
 {
@@ -49,7 +47,7 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.respond',
-            'forms.respond'
+            'forms.respond',
         ])) {
             throw new AuthorizationException('You do not have permission to view this form.');
         }
@@ -58,22 +56,22 @@ class FormController extends Controller
 
         // Helpers to autofill dropdowns, radio and checkbox groups.
         array_walk_recursive($model, function (&$item, $key) {
-            if ($key === "choices" && $item === "hms:teams") {
+            if ($key === 'choices' && $item === 'hms:teams') {
                 $item = array_map(function ($role) {
                     return [
                         'value' => $role->getName(),
-                        'text' => $role->getDisplayName()
+                        'text' => $role->getDisplayName(),
                     ];
                 }, $this->roleRepository->findAllTeams());
             }
 
-            if ($key === "choices" && $item === "hms:tools") {
+            if ($key === 'choices' && $item === 'hms:tools') {
                 $item = array_map(function ($tool) {
                     return $tool->getDisplayName();
                 }, $this->toolRepository->findAll());
             }
 
-            if ($key === "choices" && $item === "hms:tools:induction") {
+            if ($key === 'choices' && $item === 'hms:tools:induction') {
                 $item = array_map(function ($tool) {
                     return $tool->getDisplayName();
                 }, $this->toolRepository->findAll());
@@ -94,16 +92,16 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.respond',
-            'forms.respond'
+            'forms.respond',
         ])) {
             throw new AuthorizationException('You do not have permission to view this form.');
         }
 
         if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) > $form->getMaxResponses()) {
             flash('You have responded to this form more than the permitted number of times.');
+
             return redirect()->back();
         }
-
 
         // We need to find all possible keys for a form.
         $formDefinition = $form->getJsonDefinition();
@@ -154,7 +152,7 @@ class FormController extends Controller
 
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.viewResponses',
-            'forms.viewResponses'
+            'forms.viewResponses',
         ])) {
             throw new AuthorizationException('You do not have permission to view this form.');
         }
@@ -181,7 +179,7 @@ class FormController extends Controller
 
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.viewResponses',
-            'forms.viewResponses'
+            'forms.viewResponses',
         ])) {
             throw new AuthorizationException('You do not have permission to view this form.');
         }

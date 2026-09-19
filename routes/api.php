@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\RfidAccessTokenController;
 use App\Http\Controllers\Api\Banking\StripeController;
 use App\Http\Controllers\Api\Banking\TransactionUploadController;
 use App\Http\Controllers\Api\DovecotPushController;
+use App\Http\Controllers\Api\Forms\FormController;
 use App\Http\Controllers\Api\Gatekeeper\BuildingController;
 use App\Http\Controllers\Api\Gatekeeper\RegisterRfidTagController;
 use App\Http\Controllers\Api\Gatekeeper\TemporaryAccessBookingController;
@@ -19,7 +20,6 @@ use App\Http\Controllers\Api\Snackspace\VendingMachineController;
 use App\Http\Controllers\Api\SpaceApiController;
 use App\Http\Controllers\Api\Tools\BookingController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\Forms\FormController;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -2,8 +2,6 @@
 
 namespace HMS\Entities\Forms;
 
-use Carbon\Carbon;
-
 class Form
 {
     /**
@@ -37,11 +35,10 @@ class Form
     protected $permissionName;
 
     /**
-     * Create a new form
-     *
+     * Create a new form.
      */
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
     /**
@@ -113,7 +110,7 @@ class Form
     }
 
     /**
-     * Sets the max number of responses per member (0 is unlimited)
+     * Sets the max number of responses per member (0 is unlimited).
      *
      * @param int $maxResponses
      *
@@ -151,7 +148,7 @@ class Form
     }
 
     /**
-     * Gets the form permission name to delegate form edit/responses
+     * Gets the form permission name to delegate form edit/responses.
      *
      * @return null|string
      */

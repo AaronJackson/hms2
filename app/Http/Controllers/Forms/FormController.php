@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Forms;
 
 use App\Http\Controllers\Controller;
+use HMS\Entities\Forms\Form;
 use HMS\Repositories\Forms\FormRepository;
 use HMS\Repositories\Forms\FormResponseRepository;
 use HMS\Repositories\PermissionRepository;
 use HMS\Repositories\RoleRepository;
 use Illuminate\Http\Request;
-use HMS\Entities\Forms\Form;
-use LaravelDoctrine\ACL\Permissions\Permission;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use LaravelDoctrine\ACL\Permissions\Permission;
 
 class FormController extends Controller
 {
@@ -28,8 +28,7 @@ class FormController extends Controller
         protected FormResponseRepository $formResponseRepository,
         protected PermissionRepository $permissionRepository,
         protected RoleRepository $roleRepository
-    )
-    {
+    ) {
         $this->formRepository = $formRepository;
         $this->formResponseRepository = $formResponseRepository;
         $this->permissionRepository = $permissionRepository;
@@ -64,14 +63,16 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.respond',
-            'forms.respond'
+            'forms.respond',
         ])) {
             flash('You do not have permission to view to ' . $form->getName());
+
             return redirect()->back();
         }
 
         if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) > $form->getMaxResponses()) {
             flash('You have responded to this form more than the permitted number of times.');
+
             return redirect()->back();
         }
 
@@ -89,9 +90,10 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.' . $form->getPermissionName() . '.viewResponses',
-            'forms.viewResponses'
+            'forms.viewResponses',
         ])) {
             flash('You do not have permission to view responses to ' . $form->getName());
+
             return redirect()->back();
         }
 
@@ -136,6 +138,7 @@ class FormController extends Controller
     {
         if (Gate::denies('forms.edit')) {
             flash('You do not have permission to create new forms');
+
             return redirect()->back();
         }
 
@@ -155,6 +158,7 @@ class FormController extends Controller
     {
         if (Gate::denies('forms.edit')) {
             flash('You do not have permission to create new forms');
+
             return redirect()->back();
         }
 
@@ -163,7 +167,7 @@ class FormController extends Controller
             'jsonDefinition' => 'required|json',
             'maxResponses' => 'integer',
             'notificationKey' => 'sometimes|nullable|string',
-            'permissionName' => 'string|required|lowercase|max:32'
+            'permissionName' => 'string|required|lowercase|max:32',
         ]);
 
         $form = new Form();
@@ -195,9 +199,10 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.edit',
-            'forms.' . $form->getPermissionName() . '.edit'
+            'forms.' . $form->getPermissionName() . '.edit',
         ])) {
             flash('You do not have permission to edit ' . $form->getName());
+
             return redirect()->back();
         }
 
@@ -205,7 +210,7 @@ class FormController extends Controller
     }
 
     /**
-     * Handle the update of a form
+     * Handle the update of a form.
      *
      * @param Form $form
      * @param Request $request
@@ -216,9 +221,10 @@ class FormController extends Controller
     {
         if (Gate::none([
             'forms.edit',
-            'forms.' . $form->getPermissionName() . '.edit'
+            'forms.' . $form->getPermissionName() . '.edit',
         ])) {
             flash('You do not have permission to edit ' . $form->getName());
+
             return redirect()->back();
         }
 
@@ -251,6 +257,7 @@ class FormController extends Controller
     {
         if (Gate::denies('forms.edit')) {
             flash('You do not have permission to manage the permissions of ' . $form->getName());
+
             return redirect()->back();
         }
 
@@ -281,6 +288,7 @@ class FormController extends Controller
     {
         if (Gate::denies('forms.edit')) {
             flash('You do not have permission to manage the permissions of ' . $form->getName());
+
             return redirect()->back();
         }
 
