@@ -56,18 +56,10 @@ class NewFormResponse extends Notification implements ShouldQueue, NotificationS
     {
         $url = route('forms.responses', $this->form->getId());
 
-        $response = $this->formResponse->getResponseJson();
-
         $embed = [
             'title' => '🖇️ Form Response: ' . $this->form->getName(),
             'url' => $url,
-            'fields' => array_map(function ($key, $value) {
-                return [
-                    'name' => $key,
-                    'value' => $value,
-                    'inline' => false,
-                ];
-            }, array_keys($response), array_values($response)),
+            'description' => $this->formResponse->getResponder()->getFullName() . ' has responded to your form.',
         ];
 
         return (new DiscordMessage())->embed($embed);
