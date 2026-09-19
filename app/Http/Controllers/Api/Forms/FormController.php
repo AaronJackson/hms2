@@ -65,16 +65,18 @@ class FormController extends Controller
                 }, $this->roleRepository->findAllTeams());
             }
 
-            if ($key === 'choices' && $item === 'hms:tools') {
-                $item = array_map(function ($tool) {
-                    return $tool->getDisplayName();
-                }, $this->toolRepository->findAll());
-            }
+            if ($key === 'choices' && ($item === 'hms:tools' || $item === 'hms:tools:induction')) {
+                $tools = $this->toolRepository->findAll();
 
-            if ($key === 'choices' && $item === 'hms:tools:induction') {
+                if ($item === 'hms:tools:induction') {
+                    $tools = array_filter($this->toolRepository->findAll(), function($tool) {
+                        return $tool->isRestricted();
+                    });
+                }
+
                 $item = array_map(function ($tool) {
                     return $tool->getDisplayName();
-                }, $this->toolRepository->findAll());
+                }, $tools);
             }
         });
 
