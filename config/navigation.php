@@ -77,7 +77,7 @@ return [
         'forms' => [
             'text' => 'Forms',
             'route' => 'forms.index',
-            'permissions' => [],
+            'permissions' => ['forms.index'],
             'feature' => 'forms',
         ],
         'links' => [

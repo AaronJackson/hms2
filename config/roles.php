@@ -149,6 +149,7 @@ return [
         'forms.respond',
         'forms.edit',
         'forms.viewResponses',
+        'forms.index',
     ],
 
     /*
@@ -281,6 +282,7 @@ return [
                 'phones.view.self',
                 'phones.edit.self',
                 'phones.view.directory.limited',
+                'forms.index',
             ],
         ],
         'member.temporarybanned' => [
