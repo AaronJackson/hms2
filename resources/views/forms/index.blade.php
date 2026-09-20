@@ -23,7 +23,7 @@
         @canany(['forms.respond', 'forms.' . $form->getPermissionName() . '.respond', 'forms.edit', 'forms.' . $form->getPermissionName() . '.edit', 'forms.viewResponses', 'forms.' . $form->getPermissionName() . '.viewResponses' ])
         <tr>
           <td class="text-nowrap">
-            @if ($form->getMaxResponses() > 0 && $formResponseRepository->countUserResponsesForForm($form, Auth::user()) > $form->getMaxResponses())
+            @if ($form->getMaxResponses() > 0 && $formResponseRepository->countUserResponsesForForm($form, Auth::user()) >= $form->getMaxResponses())
             {{ $form->getName() }} <div><small class="text-muted">(You cannot respond to this form again)</small></div>
             @else
             <a href="{{ route('forms.view', $form->getId()) }}">{{ $form->getName() }}</a>

@@ -53,9 +53,11 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
     {
         $qb = parent::createQueryBuilder('responses')
             ->select('COUNT(responses.id)')
-            ->where('responses.responder = :user');
+            ->where('responses.responder = :user')
+            ->andWhere('responses.form = :form');
 
         $qb->setParameter('user', $user);
+        $qb->setParameter('form', $form);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

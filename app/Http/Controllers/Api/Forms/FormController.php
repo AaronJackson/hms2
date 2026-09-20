@@ -122,7 +122,7 @@ class FormController extends Controller
             throw new AuthorizationException('You do not have permission to view this form.');
         }
 
-        if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) > $form->getMaxResponses()) {
+        if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) >= $form->getMaxResponses()) {
             flash('You have responded to this form more than the permitted number of times.');
 
             return redirect()->back();
