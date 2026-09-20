@@ -6,7 +6,7 @@
   export default {
     props: {
       formId: {
-        type: Number
+        type: String
       }
     },
 
@@ -41,7 +41,7 @@
           contentType: 'application/json',
           data: JSON.stringify(sender.data)
         }).done(response => {
-          console.log(response);
+          //
         });
       }
     },
