@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use HMS\Entities\Role;
 use HMS\Governance\VotingManager;
 use HMS\Repositories\Forms\FormRepository;
+use HMS\Repositories\Forms\FormResponseRepository;
 use HMS\Repositories\Members\BoxRepository;
 use HMS\Repositories\Members\ProjectRepository;
 use HMS\Repositories\Membership\RejectedLogRepository;
@@ -62,6 +63,11 @@ class HomeController extends Controller
     protected $formRepository;
 
     /**
+     * @var FormResponseRepository
+     */
+    protected $formResponseRepository;
+
+    /**
      * Create a new controller instance.
      *
      * @param ProjectRepository $projectRepository
@@ -85,7 +91,8 @@ class HomeController extends Controller
         ToolRepository $toolRepository,
         VotingManager $votingManager,
         RejectedLogRepository $rejectedLogRepository,
-        FormRepository $formRepository
+        FormRepository $formRepository,
+        FormResponseRepository $formResponseRepository
     ) {
         $this->projectRepository = $projectRepository;
         $this->boxRepository = $boxRepository;
@@ -96,6 +103,7 @@ class HomeController extends Controller
         $this->votingManager = $votingManager;
         $this->rejectedLogRepository = $rejectedLogRepository;
         $this->formRepository = $formRepository;
+        $this->formResponseRepository = $formResponseRepository;
     }
 
     /**
@@ -144,6 +152,10 @@ class HomeController extends Controller
         }, $tools);
         $votingStatus = $this->votingManager->getVotingStatusForUser($user);
         $forms = $this->formRepository->findAll();
+        $formResponseCounts = [];
+        foreach ($forms as $form) {
+            $formResponseCounts[$form->getId()] = $this->formResponseRepository->countVisibleResponsesForForm($form);
+        }
 
         return view('home')->with([
             'user' => $user,
@@ -155,6 +167,7 @@ class HomeController extends Controller
             'toolIds' => $toolIds,
             'votingStatus' => $votingStatus,
             'forms' => $forms,
+            'formResponseCounts' => $formResponseCounts,
         ]);
     }
 }

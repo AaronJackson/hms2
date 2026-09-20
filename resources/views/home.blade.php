@@ -26,7 +26,7 @@
     @endcomponent
     @component('card.commonTasks', ['user' => $user])
     @endcomponent
-    @component('card.forms', ['forms' => $forms])
+    @component('card.forms', ['forms' => $forms, 'formResponseCounts' => $formResponseCounts])
     @endcomponent
     @component('card.access', ['user' => $user])
     @endcomponent

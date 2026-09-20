@@ -23,16 +23,22 @@
         @canany(['forms.respond', 'forms.' . $form->getPermissionName() . '.respond', 'forms.edit', 'forms.' . $form->getPermissionName() . '.edit', 'forms.viewResponses', 'forms.' . $form->getPermissionName() . '.viewResponses' ])
         <tr>
           <td class="text-nowrap">
-            @if ($form->getMaxResponses() > 0 && $formResponseRepository->countUserResponsesForForm($form, Auth::user()) >= $form->getMaxResponses())
+            @if ($form->getMaxResponses() > 0 && $userResponseCounts[$form->getId()] >= $form->getMaxResponses())
             {{ $form->getName() }} <div><small class="text-muted">(You cannot respond to this form again)</small></div>
             @else
             <a href="{{ route('forms.view', $form->getId()) }}">{{ $form->getName() }}</a>
             @endif
-
           </td>
           <td>
             @canany(['forms.viewResponses', 'forms.' . $form->getPermissionName() . '.viewResponses'])
-            <a type="button" class="btn btn-primary btn-sm" href="{{ route('forms.responses', $form->getId()) }}">View Responses</a>
+            <a type="button" class="btn btn-primary btn-sm" href="{{ route('forms.responses', $form->getId()) }}">
+              View Responses
+              @if ($formResponseCounts[$form->getId()] > 0)
+              <span class="badge badge-light" title="Responses pending review">
+                {{ $formResponseCounts[$form->getId()] }}
+              </span>
+              @endif
+            </a>
             @endcan
             @canany(['forms.edit', 'forms.' . $form->getPermissionName() . '.edit'])
             <a type="button" class="btn btn-primary btn-sm" href="{{ route('forms.edit', $form->getId()) }}">Edit Form</a>

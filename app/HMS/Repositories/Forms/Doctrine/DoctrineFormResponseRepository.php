@@ -63,6 +63,25 @@ class DoctrineFormResponseRepository extends EntityRepository implements FormRes
     }
 
     /**
+     * Count the number of visible responses to a form.
+     *
+     * @param Form $form
+     *
+     * @return int
+     */
+    public function countVisibleResponsesForForm(Form $form)
+    {
+        $qb = parent::createQueryBuilder('responses')
+            ->select('COUNT(responses.id)')
+            ->where('responses.form = :form')
+            ->andWhere('responses.hidden = false');
+
+        $qb->setParameter('form', $form);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
      * Commit the form response to the database.
      *
      * @param FormResponse $formResponse

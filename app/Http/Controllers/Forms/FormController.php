@@ -46,9 +46,20 @@ class FormController extends Controller
     {
         $forms = $this->formRepository->paginateAll();
 
+        $formResponseCounts = [];
+        foreach ($forms as $form) {
+            $formResponseCounts[$form->getId()] = $this->formResponseRepository->countVisibleResponsesForForm($form);
+        }
+
+        $userResponseCounts = [];
+        foreach ($forms as $form) {
+            $userResponseCounts[$form->getId()] = $this->formResponseRepository->countUserResponsesForForm($form, Auth::user());
+        }
+
         return view('forms.index')->with([
             'forms' => $forms,
-            'formResponseRepository' => $this->formResponseRepository,
+            'userResponseCounts' => $userResponseCounts,
+            'formResponseCounts' => $formResponseCounts,
         ]);
     }
 
