@@ -119,13 +119,11 @@ class FormController extends Controller
             'forms.' . $form->getPermissionName() . '.respond',
             'forms.respond',
         ])) {
-            throw new AuthorizationException('You do not have permission to view this form.');
+            throw new AuthorizationException('You do not have permission to respond to this form.');
         }
 
         if ($form->getMaxResponses() > 0 && $this->formResponseRepository->countUserResponsesForForm($form, Auth::user()) >= $form->getMaxResponses()) {
-            flash('You have responded to this form more than the permitted number of times.');
-
-            return redirect()->back();
+            throw new AuthorizationException('You have responded to this form more than the permitted number of times.');
         }
 
         // We need to find all possible keys for a form.
