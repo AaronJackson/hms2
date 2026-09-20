@@ -3,45 +3,6 @@
 @section('content')
 @section('pageTitle', $form->getName())
 
-<script>
-  const updateComment = (e) => {
-    e = e || window.event;
-
-    let target = e.originalTarget;
-    let value = target.value;
-    let responseId = target.getAttribute('data-response-id');
-
-    $.ajax({
-      method: 'PUT',
-      url: `/api/forms/responses/${responseId}/comment`,
-      data: {
-        comment: value
-      },
-      success: () => {
-        target.classList.add('is-valid');
-        setTimeout(() => {
-          target.classList.remove('is-valid');
-        }, 1000);
-      }
-    });
-  };
-
-  const hideResponse = (e) => {
-    e = e || window.event;
-
-    let target = e.originalTarget;
-    let responseId = target.getAttribute('data-response-id');
-
-    $.ajax({
-      method: 'PUT',
-      url: `/api/forms/responses/${responseId}/hide`,
-      success: () => {
-        $(target).parent().parent().remove();
-      }
-    });
-  };
-</script>
-
 <div class="container-fluid">
   <div class="dropdownt">
     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownNumRows" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -103,17 +64,13 @@
           <td class="text-nowrap">{{ $formResponse->getCreatedAt() }}</td>
           <td class="text-nowrap">{{ $formResponse->getResponder()->getFullName() }}</td>
           <td class="text-nowrap">
-            <input class="form-control"
-              value="{{ $formResponse->getComment() }}"
-              data-response-id="{{ $formResponse->getId() }}"
-              onfocusout="updateComment()" />
+            <form-comment-field
+              form-response-id="{{ $formResponse->getId() }}"
+              comment="{{ $formResponse->getComment() }}" />
           </td>
           <td class="text-nowrap">
             @if (! $formResponse->getHidden())
-            <button type="button"
-              class="btn btn-primary btn-sm"
-              data-response-id="{{ $formResponse->getId() }}"
-              onclick="hideResponse()">Archive</button>
+              <form-archive-button form-response-id="{{ $formResponse->getId() }}" />
             @endif
           </td>
         </tr>
