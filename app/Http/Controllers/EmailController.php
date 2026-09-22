@@ -43,9 +43,19 @@ class EmailController extends Controller
         $draft = Cache::get('emailMembers.draft', [
             'subject' => '',
             'emailContent' => '',
+            'recipients' => [],
         ]);
 
-        return view('emailMembers.draft', $draft);
+        $roles = array_filter($this->roleRepository->findAll(), function ($role) {
+            $name = $role->getName();
+
+            return $name === Role::MEMBER_CURRENT || str_starts_with($name, 'tools.') || str_starts_with($name, 'team.');
+        });
+
+        return view('emailMembers.draft', $draft)
+            ->with([
+                'roles' => $roles,
+            ]);
     }
 
     /**
@@ -72,18 +82,36 @@ class EmailController extends Controller
         Cache::put('emailMembers.draft', [
             'subject' => $request->subject,
             'emailContent' => $request->emailContent,
+            'recipients' => $request->recipients,
         ], now()->addMinutes(30));
 
         $emailView = new ToCurrentMembers($request->subject, $request->emailContent);
         $renderedTextPlain = $emailView->renderText();
 
-        $currentMemberCount = $this->roleRepository->findOneByName(Role::MEMBER_CURRENT)->getUsers()->count();
+        $roles = array_map(function ($roleName) {
+            return $this->roleRepository->findOneByName($roleName);
+        }, $request->recipients);
+
+        $currentMemberRole = $this->roleRepository->findOneByName(Role::MEMBER_CURRENT);
+
+        $users = [];
+        foreach ($roles as $role) {
+            $roleMembers = $role->getUsers();
+
+            // We should check that they are a current member, for cases where a role is retained.
+            foreach ($roleMembers as $roleMember) {
+                if ($roleMember->getRoles()->contains($currentMemberRole)) {
+                    $users[] = $roleMember;
+                }
+            }
+        }
+        $users = array_unique($users, SORT_REGULAR);
 
         return view('emailMembers.review')
             ->with([
                 'subject' => $request->subject,
                 'emailPlain' => $renderedTextPlain,
-                'currentMemberCount' => $currentMemberCount,
+                'currentMemberCount' => count($users),
             ]);
     }
 
@@ -100,6 +128,7 @@ class EmailController extends Controller
         $draft = Cache::get('emailMembers.draft', [
             'subject' => '',
             'emailContent' => '',
+            'recipients' => [],
         ]);
 
         $emailView = new ToCurrentMembers($draft['subject'], $draft['emailContent']);
@@ -126,7 +155,11 @@ class EmailController extends Controller
     {
         $draft = Cache::get('emailMembers.draft');
 
-        EmailCurrentMembersJob::dispatch($draft['subject'], $draft['emailContent'], $request->testSend);
+        $roles = array_map(function ($roleName) {
+            return $this->roleRepository->findOneByName($roleName);
+        }, $draft['recipients']);
+
+        EmailCurrentMembersJob::dispatch($draft['subject'], $draft['emailContent'], $roles, $request->testSend);
 
         if (! $request->testSend) {
             flash('Email queued for sending', 'success');
