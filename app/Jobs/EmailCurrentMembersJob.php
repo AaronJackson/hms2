@@ -38,11 +38,11 @@ class EmailCurrentMembersJob implements ShouldQueue
     public $htmlContent;
 
     /**
-     * The list of roles which an email should be sent to.
+     * The list of role names which an email should be sent to.
      *
      * @var array
      */
-    public $roles;
+    public $roleNames;
 
     /**
      * Should this only sent as a test.
@@ -56,18 +56,18 @@ class EmailCurrentMembersJob implements ShouldQueue
      *
      * @param string $subject The email subject.
      * @param string $htmlContent The email content as text/html.
-     * @param array $roles An array of applicable roles.
+     * @param array $roleNames An array of applicable role names.
      * @param bool $testSend Should this only sent as a test.
      */
     public function __construct(
         string $subject,
         string $htmlContent,
-        array $roles,
+        array $roleNames,
         bool $testSend = true
     ) {
         $this->subject = $subject;
         $this->htmlContent = $htmlContent;
-        $this->roles = $roles;
+        $this->roleNames = $roleNames;
         $this->testSend = $testSend;
     }
 
@@ -91,9 +91,9 @@ class EmailCurrentMembersJob implements ShouldQueue
 
         $currentMemberRole = $roleRepository->findOneByName(Role::MEMBER_CURRENT);
         $currentMembers = [];
-        foreach ($this->roles as $role) {
+        foreach ($this->roleNames as $roleName) {
             // Get a fresh copy since it's been serialised.
-            $role = $roleRepository->findOneByName($role->getName());
+            $role = $roleRepository->findOneByName($roleName);
 
             $roleMembers = $role->getUsers();
 

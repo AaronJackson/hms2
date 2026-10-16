@@ -154,12 +154,9 @@ class EmailController extends Controller
     public function send(Request $request)
     {
         $draft = Cache::get('emailMembers.draft');
+        $roleNames = $draft['recipients'];
 
-        $roles = array_map(function ($roleName) {
-            return $this->roleRepository->findOneByName($roleName);
-        }, $draft['recipients']);
-
-        EmailCurrentMembersJob::dispatch($draft['subject'], $draft['emailContent'], $roles, $request->testSend);
+        EmailCurrentMembersJob::dispatch($draft['subject'], $draft['emailContent'], $roleNames, $request->testSend);
 
         if (! $request->testSend) {
             flash('Email queued for sending', 'success');
