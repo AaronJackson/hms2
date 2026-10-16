@@ -2,7 +2,6 @@
 
 namespace App\Notifications\Tools;
 
-use HMS\Entities\Role;
 use HMS\Entities\Tools\Tool;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -52,6 +51,4 @@ class NotifyBookingCancelledForMaintenance extends Notification implements Shoul
                         ' Unfortunately your booking for ' . $this->tool->getDisplayName() . ' has been cancelled due to an issue with the tool.'
                     );
     }
-
-
 }
